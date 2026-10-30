@@ -1,0 +1,1656 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bravi Platforms — Homepage V2</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0;background:#151515}
+.v2 *{box-sizing:border-box}
+a{color:#C4000F}a:hover{color:#8F000B}
+.v2 :focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em}
+@keyframes rise{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.btn{display:inline-flex;align-items:center;gap:12px;text-decoration:none;font-weight:700;transition:background-color .25s,color .25s}
+.btn .arr{display:inline-block;transition:transform .25s}.btn:hover .arr{transform:translateX(6px)}
+.btn-red{background:var(--acc);color:#FFFFFF}.btn-red:hover{background:#B5050F;color:#FFFFFF}
+.btn-w{background:#FFFFFF;color:#151515}.btn-w:hover{background:#151515;color:#FFFFFF}
+.btn-lw{border:1.5px solid #FFFFFF;color:#FFFFFF}.btn-lw:hover{background:#FFFFFF;color:#151515}
+.io{opacity:0;transform:translateY(40px);transition:opacity .9s ease,transform 1s cubic-bezier(.2,.7,.1,1)}
+.io.in{opacity:1;transform:none}
+.cmm::before{counter-reset:mm var(--mm,0);content:counter(mm)}
+.cdeg::before{counter-reset:dg var(--deg,0);content:counter(dg)}
+.calt::before{counter-reset:al var(--alt,0);content:counter(al)}
+
+/* ALTIMETRO */
+.alt{position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:50;mix-blend-mode:difference;color:#FFFFFF;pointer-events:none}
+.alt-fill{transform:scaleY(var(--altp,0));transform-origin:bottom}
+
+/* 3D */
+.stage3d{perspective:1500px;perspective-origin:50% 30%;cursor:grab;touch-action:none}
+.stage3d:active{cursor:grabbing}
+.model{position:absolute;left:50%;top:88%;width:0;height:0;transform-style:preserve-3d;transform:rotateX(-14deg) rotateY(var(--ry,-30deg))}
+.g3{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.gu1{transform:translateY(calc(var(--up,0px) * -.333))}
+.gu2{transform:translateY(calc(var(--up,0px) * -.667))}
+.gu{transform:translateY(calc(var(--up,0px) * -1))}
+.bx{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.f{position:absolute;left:0;top:0;display:block;background:var(--c)}
+.fr{width:var(--w);height:var(--h);transform:translate(-50%,-50%) translateZ(calc(var(--d) / 2))}
+.bk{width:var(--w);height:var(--h);transform:translate(-50%,-50%) rotateY(180deg) translateZ(calc(var(--d) / 2));box-shadow:inset 0 0 0 999px rgba(0,0,0,.18)}
+.rt{width:var(--d);height:var(--h);transform:translate(-50%,-50%) rotateY(90deg) translateZ(calc(var(--w) / 2));box-shadow:inset 0 0 0 999px rgba(0,0,0,.28)}
+.lf{width:var(--d);height:var(--h);transform:translate(-50%,-50%) rotateY(-90deg) translateZ(calc(var(--w) / 2));box-shadow:inset 0 0 0 999px rgba(0,0,0,.1)}
+.tp{width:var(--w);height:var(--d);transform:translate(-50%,-50%) rotateX(90deg) translateZ(calc(var(--h) / 2));box-shadow:inset 0 0 0 999px rgba(255,255,255,.14)}
+.bt{width:var(--w);height:var(--d);transform:translate(-50%,-50%) rotateX(-90deg) translateZ(calc(var(--h) / 2));box-shadow:inset 0 0 0 999px rgba(0,0,0,.5)}
+.chip{cursor:pointer;transition:background-color .25s,color .25s,border-color .25s}
+.chip:hover{border-color:#FFFFFF}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#FFFFFF}
+
+/* SPLIT */
+.half{flex:1 1 0;min-width:0;transition:flex-grow .9s cubic-bezier(.7,0,.2,1)}
+.split:hover .half{flex-grow:.7}
+.split .half:hover{flex-grow:1.6}
+.half .h-up{transition:transform 1s cubic-bezier(.3,.7,.2,1)}
+.half:hover .h-up{transform:translateY(-70px)}
+.half .h-more{opacity:0;transform:translateY(16px);transition:opacity .4s,transform .5s}
+.half:hover .h-more,.half:focus-visible .h-more{opacity:1;transform:none;transition-delay:.3s}
+.half .h-arr{transition:transform .4s}
+.half:hover .h-arr{transform:rotate(-45deg)}
+
+/* ANATOMIA */
+.lay{position:absolute;inset:0;transition:transform 1.2s cubic-bezier(.7,0,.2,1)}
+.lab{opacity:0;transition:opacity .5s}
+.exploded .lab{opacity:1;transition-delay:1s}
+
+/* SKYLINE */
+.bar{cursor:pointer;transform-origin:bottom;transform:scaleY(0);transition:transform 1.2s cubic-bezier(.2,.7,.1,1),height .9s cubic-bezier(.2,.7,.1,1),background-color .3s}
+.sky.in .bar{transform:scaleY(1)}
+.barbtn:hover .bar,.barbtn.on .bar{background-color:var(--acc)}
+.barbtn .bval{opacity:0;transition:opacity .3s}
+.barbtn:hover .bval,.barbtn.on .bval{opacity:1}
+.mtog{cursor:pointer}
+.mtog.on{background:#151515;color:#FFFFFF}
+
+/* FINDER */
+.ftrack{display:flex;transition:transform .9s cubic-bezier(.7,0,.2,1)}
+.fpanel{flex:0 0 100%;min-width:0}
+.fchip{cursor:pointer;transition:background-color .25s,color .25s,border-color .25s}
+.fchip:hover{border-color:#151515}
+.fchip.on{background:#151515;color:#FFFFFF;border-color:#151515}
+.fres{animation:rise .8s cubic-bezier(.2,.7,.1,1) both}
+input[type=range]{accent-color:var(--acc);width:100%;height:28px;cursor:pointer}
+
+/* STORIA */
+.htrack{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:8px}
+.htrack::-webkit-scrollbar{display:none}
+.hcard{flex:0 0 min(560px, 86%);scroll-snap-align:start}
+@keyframes nowCycle{0%,30%{clip-path:inset(0 0 0 100%)}45%,85%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 100% 0 0)}}
+.hcard .now{clip-path:inset(0 0 0 100%);animation:nowCycle 9s cubic-bezier(.7,0,.2,1) infinite;transition:clip-path 1s cubic-bezier(.7,0,.2,1)}
+.hcard:hover .now{animation:none;clip-path:inset(0 0 0 0)}
+.still .hcard .now{clip-path:inset(0 0 0 0)}
+.hprog{transform:scaleX(var(--sx,.25));transform-origin:left}
+
+/* CASE */
+.cslide{position:absolute;inset:0;clip-path:inset(0 0 0 100%);z-index:0}
+.cslide.prev{clip-path:inset(0 0 0 0);z-index:1}
+.cslide.on{clip-path:inset(0 0 0 0);z-index:2;transition:clip-path 1.2s cubic-bezier(.7,0,.2,1)}
+.cslide.on .ctxt{animation:rise .9s cubic-bezier(.2,.7,.1,1) .6s both}
+.cslide.on .cimg{animation:kb 7s linear both}
+@keyframes kb{from{transform:scale(1.12)}to{transform:scale(1)}}
+
+/* CONTATTO */
+.mq{display:flex;width:max-content;animation:marquee 30s linear infinite}
+
+/* DINAMICITÀ+ */
+.model,.model *{pointer-events:none}
+.model{transform:rotateX(var(--rx,-14deg)) rotateY(var(--ry,-30deg))}
+.tag3d{position:absolute;left:0;top:0;white-space:nowrap;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.06em;color:#FFFFFF;background:rgba(21,21,21,.88);border:1px solid var(--acc);padding:5px 9px;pointer-events:none}
+@keyframes splitL{0%,42%{flex-grow:1.5}50%,92%{flex-grow:.75}100%{flex-grow:1.5}}
+@keyframes splitR{0%,42%{flex-grow:.75}50%,92%{flex-grow:1.5}100%{flex-grow:.75}}
+@keyframes hupA{0%,42%{transform:translateY(-70px)}50%,92%{transform:none}100%{transform:translateY(-70px)}}
+@keyframes hupB{0%,42%{transform:none}50%,92%{transform:translateY(-70px)}100%{transform:none}}
+@keyframes hmA{0%,42%{opacity:1;transform:none}50%,92%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+@keyframes hmB{0%,42%{opacity:0;transform:translateY(16px)}50%,92%{opacity:1;transform:none}100%{opacity:0;transform:translateY(16px)}}
+.split:not(:hover) .half:nth-of-type(1){animation:splitL 9s cubic-bezier(.7,0,.2,1) infinite}
+.split:not(:hover) .half:nth-of-type(2){animation:splitR 9s cubic-bezier(.7,0,.2,1) infinite}
+.split:not(:hover) .half:nth-of-type(1) .h-up{animation:hupA 9s cubic-bezier(.3,.7,.2,1) infinite}
+.split:not(:hover) .half:nth-of-type(2) .h-up{animation:hupB 9s cubic-bezier(.3,.7,.2,1) infinite}
+.split:not(:hover) .half:nth-of-type(1) .h-more{animation:hmA 9s ease infinite}
+.split:not(:hover) .half:nth-of-type(2) .h-more{animation:hmB 9s ease infinite}
+[data-rv]{clip-path:inset(0 0 100% 0);transform:translateY(40px);transition:clip-path 1.1s cubic-bezier(.7,0,.2,1),transform 1.1s cubic-bezier(.2,.7,.1,1)}
+[data-rv].in{clip-path:inset(-10% -5% -25% -5%);transform:none}
+.skw{transform:skewX(calc(var(--skew,0) * 1deg))}
+.cur{position:fixed;left:0;top:0;z-index:100;pointer-events:none;width:44px;height:44px;margin:-22px 0 0 -22px;border:1.5px solid var(--acc);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--acc);font-weight:800;font-size:16px;opacity:0;transition:width .25s,height .25s,margin .25s,background-color .25s,opacity .3s}
+.cur.on{opacity:1}
+.cur.big{width:84px;height:84px;margin:-42px 0 0 -42px;background:rgba(227,6,19,.16)}
+@media (hover: none){.cur{display:none}}
+@media (prefers-reduced-motion: reduce){.v2 [data-rv]{clip-path:none;transform:none}.v2 .cur{display:none}}
+.still [data-rv]{clip-path:none;transform:none}
+
+/* NAV + MEGA MENU */
+.navl{position:relative;color:#FFFFFF;text-decoration:none;font-size:15px;font-weight:600;padding:10px 0}
+.navl::after{content:'';position:absolute;left:0;right:0;bottom:2px;height:2px;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.navl:hover{color:#FFFFFF}.navl:hover::after,.mm-wrap:focus-within .navl::after{transform:scaleX(1)}
+.mm-wrap::after{content:'';position:absolute;left:-20px;right:-20px;top:100%;height:26px}
+.mega{position:absolute;top:100%;left:-28px;margin-top:22px;width:780px;background:#FFFFFF;color:#151515;padding:28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .3s,transform .4s cubic-bezier(.2,.7,.1,1),visibility 0s linear .4s;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.mm-wrap:hover .mega,.mm-wrap:focus-within .mega{opacity:1;visibility:visible;transform:none;transition:opacity .3s,transform .4s cubic-bezier(.2,.7,.1,1)}
+.mlink{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #E2E2E2;color:#2B2B2A;text-decoration:none;font-weight:600;font-size:15px}
+.mlink:hover{color:#C4000F}.mlink .arr{display:inline-block;transition:transform .25s}.mlink:hover .arr{transform:translateX(5px)}
+@media (max-width: 1240px){.mainnav{display:none !important}}
+.tick{display:flex;width:max-content;animation:marquee 44s linear infinite}
+
+/* GAMMA COMPLETA */
+.gcard{display:none;flex-direction:column;background:#1E1E1E;border:1px solid #333333;transition:border-color .3s,background-color .3s}
+.gcard.show{display:flex;animation:rise .7s cubic-bezier(.2,.7,.1,1) both}
+.gcard:hover{border-color:var(--acc);background:#232323}
+.gcard .g-up{transition:transform .9s cubic-bezier(.3,.7,.2,1)}
+.gcard:hover .g-up{transform:translateY(-34px)}
+.gcard .gidx{transition:-webkit-text-stroke-color .3s}
+.gcard:hover .gidx{-webkit-text-stroke-color:var(--acc)}
+.gfb,.cmpbtn{cursor:pointer;transition:background-color .25s,color .25s,border-color .25s}
+.gfb:hover,.cmpbtn:hover{border-color:#FFFFFF}
+.gfb.on{background:#FFFFFF;color:#151515;border-color:#FFFFFF}
+.cmpbtn.on{background:var(--acc);border-color:var(--acc);color:#FFFFFF}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.cbarx{transform-origin:left;animation:growX 1s cubic-bezier(.2,.7,.1,1) both}
+
+/* TECNOLOGIE */
+@keyframes tprog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.ttab{cursor:pointer;transition:color .3s,background-color .3s}
+.ttab:hover{color:#FFFFFF}
+.ttab.on{color:#FFFFFF;background:#1E1E1E}
+.ttab .tf{transform:scaleX(0);transform-origin:left}
+.ttab.on .tf{transform:scaleX(1)}
+.ttab.on.run .tf{animation:tprog 7s linear both}
+.tpanel{display:none}
+.tpanel.show{display:flex;animation:rise .7s cubic-bezier(.2,.7,.1,1) both}
+@keyframes up70{0%,12%{transform:none}48%,72%{transform:translateY(-70px)}100%{transform:none}}
+@keyframes up140{0%,12%{transform:none}48%,72%{transform:translateY(-140px)}100%{transform:none}}
+@keyframes up210{0%,12%{transform:none}48%,72%{transform:translateY(-210px)}100%{transform:none}}
+@keyframes dimY{0%,12%{transform:scaleY(0)}48%,72%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+.a70{animation:up70 6s cubic-bezier(.6,0,.3,1) infinite}
+.a140{animation:up140 6s cubic-bezier(.6,0,.3,1) infinite}
+.a210{animation:up210 6s cubic-bezier(.6,0,.3,1) infinite}
+.adim{transform-box:fill-box;transform-origin:50% 100%;animation:dimY 6s cubic-bezier(.6,0,.3,1) infinite}
+@property --cyc{syntax:'<integer>';inherits:false;initial-value:200}
+@keyframes cyc{0%{--cyc:0}85%,100%{--cyc:200}}
+.cyc{animation:cyc 6s linear infinite;counter-reset:cy var(--cyc)}
+.cyc::before{content:counter(cy)}
+@keyframes batt{0%{transform:scaleX(1)}85%,100%{transform:scaleX(.12)}}
+.abatt{transform-box:fill-box;transform-origin:0 50%;animation:batt 6s linear infinite}
+@keyframes tspin{0%,10%{transform:rotate(0deg)}45%,55%{transform:rotate(180deg)}90%,100%{transform:rotate(360deg)}}
+.aspin{transform-box:view-box;transform-origin:240px 200px;animation:tspin 6s cubic-bezier(.6,0,.3,1) infinite}
+@keyframes pass{0%{transform:translateY(170px)}100%{transform:translateY(-220px)}}
+.apass{animation:pass 5s linear infinite}
+@keyframes needle{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+.aneedle{transform-box:view-box;transform-origin:240px 260px;animation:needle 3s ease-in-out infinite}
+
+/* OLTRE LA SCALA */
+.pf .pbar{transform:scaleX(0);transform-origin:left;transition:transform 1.4s cubic-bezier(.2,.7,.1,1)}
+.pf.in .pbar{transform:scaleX(1)}
+
+/* SERVIZI + NEWS */
+.svc2{transition:background-color .4s,color .4s,border-color .4s}
+.svc2:hover{background:#151515;color:#FFFFFF;border-color:#151515}
+.svc2:hover .svc-p{color:#CFCFCF}
+.svc2 .svc-ic{transition:transform .5s cubic-bezier(.2,.7,.1,1)}
+.svc2:hover .svc-ic{transform:translateY(-6px) rotate(-6deg)}
+.svc2 .arr{display:inline-block;transition:transform .25s}.svc2:hover .arr{transform:translateX(6px)}
+.ncard{display:none;flex-direction:column;text-decoration:none;color:#2B2B2A}
+.ncard.show{display:flex;animation:rise .7s cubic-bezier(.2,.7,.1,1) both}
+.ncard .nimg{transition:transform .9s cubic-bezier(.2,.7,.1,1)}
+.ncard:hover .nimg{transform:scale(1.05)}
+.ncard .arr{display:inline-block;transition:transform .25s}.ncard:hover .arr{transform:translateX(6px)}
+.svc-link{color:#C4000F}
+.svc2:hover .svc-link{color:#FF8A8A}
+.nfb{cursor:pointer;background:none;border:0;font:inherit;font-size:19px;color:#5E5E5D;padding:8px 0;min-height:44px}
+.nfb:hover{color:#151515}
+.nfb.on{color:#C4000F;text-decoration:underline;text-underline-offset:6px}
+
+/* FIRMA V2 — il Λ, le quote, il blueprint */
+@keyframes drawL{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+.lam{stroke-dasharray:1400;animation:drawL 2.4s cubic-bezier(.7,0,.2,1) .3s both}
+.bigmm{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:clamp(160px,17vw,300px);font-weight:800;letter-spacing:-.06em;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.14);font-variant-numeric:tabular-nums;pointer-events:none;white-space:nowrap}
+.f{transition:background-color .8s ease,box-shadow .8s ease}
+[data-view="wire"] .f{background:rgba(227,6,19,.06) !important;box-shadow:inset 0 0 0 1px rgba(255,140,140,.9) !important}
+.viewlbl::before{content:'VISTA · SOLIDO'}
+[data-view="wire"] .viewlbl::before{content:'VISTA · BLUEPRINT'}
+.peak{position:relative;margin-top:-40px;clip-path:polygon(0 40px,46% 40px,50% 0,54% 40px,100% 40px,100% 100%,0 100%)}
+.lvl{position:absolute;left:50%;top:50px;transform:translateX(-50%);z-index:5;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.08em;white-space:nowrap;pointer-events:none;background:#151515;color:#FFFFFF;padding:6px 12px;border:1px solid rgba(255,255,255,.3)}
+.cut{clip-path:polygon(0 0,44% 0,50% 22px,56% 0,100% 0,100% 100%,0 100%)}
+@media (max-width: 860px){
+.split{flex-direction:column;height:auto !important}
+.half{min-height:420px}
+.hero-grid{flex-direction:column}
+.alt{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+.v2 *,.v2 *::before,.v2 *::after{animation:none !important;transition:none !important}
+.v2 .io{opacity:1;transform:none}.v2 .bar{transform:scaleY(1)}
+}
+.still *,.still *::before,.still *::after{animation:none !important;transition:none !important}
+.still .io{opacity:1;transform:none}.still .bar{transform:scaleY(1)}
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+<template id="dc-tpl">
+
+<div class="{{rootClass}}" ref="{{refs.root}}" onPointerMove="{{onMove}}" style="--acc: {{accent}}; width: 100%; min-height: 100%; background: #151515; color: #FFFFFF; font-family: Manrope, system-ui, sans-serif; font-size: 18px; line-height: 1.55">
+
+
+<sc-if value="{{scrollMode}}" hint-placeholder-val="{{ false }}">
+<div class="alt" aria-hidden="true">
+<div class="mono" style="font-size: 10px; margin-bottom: 8px">QUOTA</div>
+<div style="position: relative; width: 4px; height: 220px; background: rgba(255,255,255,.3)"><div class="alt-fill" style="position: absolute; inset: 0; background: #FFFFFF"></div></div>
+<div class="mono" style="font-size: 12px; margin-top: 8px"><span class="calt"></span></div>
+<div class="mono" style="font-size: 10px">MM</div>
+</div>
+</sc-if>
+
+<!-- HEADER -->
+<header style="position: absolute; top: 0; left: 0; right: 0; z-index: 30">
+<div style="max-width: 1680px; margin: 0 auto; padding: 26px 56px; display: flex; align-items: center; justify-content: space-between; gap: 24px">
+<a href="#top" aria-label="Bravi Platforms, home" style="display: flex; flex-direction: column; text-decoration: none; color: #FFFFFF; line-height: 1">
+<span style="font-size: 38px; font-weight: 800; letter-spacing: -.03em">BRΛVI</span>
+<span style="display: flex; align-items: center; gap: 6px; margin-top: 2px"><span style="width: 56px; height: 4px; background: var(--acc)"></span><span style="font-size: 12px; font-weight: 800; letter-spacing: .1em">PLATFORMS</span></span>
+</a>
+<nav aria-label="Principale" class="mainnav" style="display: flex; align-items: center; gap: 30px">
+<div class="mm-wrap" style="position: relative">
+<a class="navl" href="#gamma" aria-haspopup="true">Piattaforme ▾</a>
+<div class="mega">
+<div>
+<p class="mono" style="margin: 0 0 10px; font-size: 11px; color: #C4000F">AERIAL PLATFORMS</p>
+<a class="mlink" href="#gamma">Leonardo HD <span class="arr">→</span></a><a class="mlink" href="#gamma">Leonardo HD 430 <span class="arr">→</span></a><a class="mlink" href="#gamma">Lui 460 <span class="arr">→</span></a><a class="mlink" href="#gamma">Residential 170 <span class="arr">→</span></a>
+</div>
+<div>
+<p class="mono" style="margin: 0 0 10px; font-size: 11px; color: #C4000F">PICKING SOLUTIONS</p>
+<a class="mlink" href="#gamma">Sprint <span class="arr">→</span></a><a class="mlink" href="#gamma">Sprint Large Parcels <span class="arr">→</span></a><a class="mlink" href="#gamma">Sprint Tire Lifter <span class="arr">→</span></a><a class="mlink" href="#gamma">Spin-Go <span class="arr">→</span></a>
+</div>
+<a href="#finder" style="display: flex; flex-direction: column; justify-content: space-between; gap: 16px; background: #151515; color: #FFFFFF; padding: 22px; text-decoration: none">
+<span class="mono" style="font-size: 11px; color: #FF6B6B">PRODUCT FINDER</span>
+<span style="font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1">Trova la tua macchina in 30 secondi.</span>
+<span style="font-weight: 700">Inizia →</span>
+</a>
+</div>
+</div>
+<a class="navl" href="#tecnologie">Tecnologia</a>
+<a class="navl" href="#servizi">Servizi</a>
+<a class="navl" href="#storia">About Us</a>
+<a class="navl" href="#applicazioni">Case Studies</a>
+<a class="navl" href="#news">News</a>
+</nav>
+<div style="display: flex; align-items: center; gap: 16px">
+<a href="#top" aria-current="true" style="width: 44px; height: 44px; border-radius: 50%; background: var(--acc); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 15px">IT</a>
+<a href="#top" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #FFFFFF; font-size: 15px">EN</a>
+<a class="btn btn-lw" href="#contatti" style="padding: 11px 18px; font-size: 15px">Richiedi una demo</a>
+<button type="button" aria-label="Apri il menu" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 18px; border: 0; background: #FFFFFF; color: #151515; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Menu <span aria-hidden="true" style="display: flex; flex-direction: column; gap: 4px"><span style="display: block; width: 20px; height: 2px; background: #151515"></span><span style="display: block; width: 20px; height: 2px; background: #151515"></span></span></button>
+</div>
+</div>
+</header>
+
+<!-- 01 HERO 3D -->
+<section id="top" ref="{{refs.hero}}" style="position: relative; overflow: hidden; background: #151515; min-height: 900px">
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 64px 64px"></div>
+<div class="hero-grid" style="position: relative; max-width: 1680px; margin: 0 auto; padding: 150px 56px 96px; display: flex; gap: 32px; align-items: stretch">
+<div style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; justify-content: center">
+<p class="mono" style="margin: 0 0 24px; font-size: 13px; color: #FF6B6B">01 · HERO — VERSIONE 2</p>
+<h1 style="margin: 0; font-size: clamp(60px, 7.4vw, 128px); line-height: .92; font-weight: 800; letter-spacing: -.055em">Engineering<br>in <span style="color: var(--acc)">Motion.</span></h1>
+<p style="margin: 30px 0 0; font-size: 21px; max-width: 520px; color: #CFCFCF">Piattaforme aeree ultracompatte e soluzioni per il picking. Ruota la macchina, guardala salire: ogni dettaglio è progettato per lavorare in quota con sicurezza.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px">
+<a class="btn btn-red" href="#mondi" style="padding: 17px 24px">Esplora la gamma <span class="arr">→</span></a>
+<a class="btn btn-lw" href="#finder" style="padding: 15.5px 24px">Trova la tua macchina</a>
+</div>
+<div class="mono" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 56px; border-top: 1px solid #333333; padding-top: 20px; max-width: 560px">
+<div><div style="font-size: 10px; color: #9A9A99">QUOTA PIATTAFORMA</div><div style="font-size: 26px; font-weight: 500"><span class="cmm"></span><span style="font-size: 12px; color: #9A9A99"> mm</span></div></div>
+<div><div style="font-size: 10px; color: #9A9A99">ROTAZIONE</div><div style="font-size: 26px; font-weight: 500"><span class="cdeg"></span><span style="font-size: 12px; color: #9A9A99"> °</span></div></div>
+<div><div style="font-size: 10px; color: #9A9A99">QUOTA MASSIMA</div><div style="font-size: 26px; font-weight: 500; color: #FF6B6B">{{maxTxt}}<span style="font-size: 12px; color: #9A9A99"> mm</span></div></div>
+</div>
+</div>
+<div style="flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column">
+<div class="stage3d" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerLeave="{{pUp}}" role="img" aria-label="Modello 3D di una piattaforma Bravi che ruota e si solleva; trascina per ruotarla" style="position: relative; height: 640px">
+<div class="bigmm" aria-hidden="true"><span class="cmm"></span><div class="cur" ref="{{refs.cur}}" aria-hidden="true" style="position: absolute; left: 626px; top: 301px; line-height: 1.55; letter-spacing: normal; white-space: normal">Λ</div></div>
+<svg aria-hidden="true" viewBox="0 0 640 640" preserveAspectRatio="xMidYMax meet" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none"><path class="lam" d="M70 600 L320 40 L570 600" fill="none" stroke="var(--acc)" stroke-width="3"></path><line x1="30" y1="600" x2="610" y2="600" stroke="rgba(255,255,255,.25)"></line></svg>
+<div class="model">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 520px; height: 520px; transform: translate(-50%, -50%) rotateX(90deg); background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px); background-size: 40px 40px; border-radius: 50%"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 320px; height: 220px; transform: translate(-50%, -50%) rotateX(90deg) translateZ(1px); background: radial-gradient(closest-side, rgba(0,0,0,.65), transparent); border-radius: 50%"></div>
+<div class="tag3d" style="transform: translate3d(10px,-8px,86px) rotateY(calc(var(--ry,0deg) * -1)) translate(-50%,-50%)">760 MM · LARGHEZZA</div>
+<div class="bx" style="--w:200px;--h:56px;--d:106px;--c:#2B2B2A;transform:translate3d(0px,-46px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:110px;--h:6px;--d:2px;--c:var(--acc);transform:translate3d(10px,-56px,54px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:34px;--h:30px;--d:12px;--c:#0E0E0E;transform:translate3d(-66px,-15px,54px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:34px;--h:30px;--d:12px;--c:#0E0E0E;transform:translate3d(66px,-15px,54px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:34px;--h:30px;--d:12px;--c:#0E0E0E;transform:translate3d(-66px,-15px,-54px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:34px;--h:30px;--d:12px;--c:#0E0E0E;transform:translate3d(66px,-15px,-54px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:26px;--h:170px;--d:44px;--c:#3C3C3B;transform:translate3d(-80px,-159px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="g3 gu1"><div class="bx" style="--w:22px;--h:170px;--d:38px;--c:#555554;transform:translate3d(-80px,-160px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div></div>
+<div class="g3 gu2"><div class="bx" style="--w:18px;--h:170px;--d:32px;--c:#6E6E6D;transform:translate3d(-80px,-161px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div></div>
+<div class="g3 gu">
+<div class="tag3d" style="transform: translate3d(150px,-200px,0px) rotateY(calc(var(--ry,0deg) * -1)) translate(-50%,-50%)">180 KG · PORTATA</div>
+<div class="tag3d" style="transform: translate3d(-80px,-290px,0px) rotateY(calc(var(--ry,0deg) * -1)) translate(-50%,-50%); border-color: #FFFFFF">▲ <span class="cmm"></span> MM</div>
+<div class="bx" style="--w:14px;--h:170px;--d:26px;--c:#8A8A89;transform:translate3d(-80px,-162px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:166px;--h:8px;--d:112px;--c:#1A1A1A;transform:translate3d(20px,-80px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:162px;--h:18px;--d:3px;--c:var(--acc);transform:translate3d(20px,-93px,55px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:162px;--h:18px;--d:3px;--c:var(--acc);transform:translate3d(20px,-93px,-55px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:3px;--h:18px;--d:112px;--c:var(--acc);transform:translate3d(-61px,-93px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:3px;--h:18px;--d:112px;--c:var(--acc);transform:translate3d(101px,-93px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:6px;--h:150px;--d:6px;--c:var(--acc);transform:translate3d(-58px,-159px,53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:6px;--h:150px;--d:6px;--c:var(--acc);transform:translate3d(98px,-159px,53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:6px;--h:150px;--d:6px;--c:var(--acc);transform:translate3d(-58px,-159px,-53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:6px;--h:150px;--d:6px;--c:var(--acc);transform:translate3d(98px,-159px,-53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:162px;--h:6px;--d:6px;--c:var(--acc);transform:translate3d(20px,-232px,53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:162px;--h:6px;--d:6px;--c:var(--acc);transform:translate3d(20px,-232px,-53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:6px;--h:6px;--d:112px;--c:var(--acc);transform:translate3d(-58px,-232px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:6px;--h:6px;--d:112px;--c:var(--acc);transform:translate3d(98px,-232px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:162px;--h:4px;--d:4px;--c:var(--acc);transform:translate3d(20px,-165px,53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:162px;--h:4px;--d:4px;--c:var(--acc);transform:translate3d(20px,-165px,-53px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:4px;--h:4px;--d:112px;--c:var(--acc);transform:translate3d(98px,-165px,0px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+<div class="bx" style="--w:26px;--h:18px;--d:14px;--c:#EDEDED;transform:translate3d(78px,-246px,50px)"><span class="f fr"></span><span class="f bk"></span><span class="f rt"></span><span class="f lf"></span><span class="f tp"></span><span class="f bt"></span></div>
+</div>
+</div>
+<span class="mono" style="position: absolute; left: 0; top: 0; font-size: 11px; color: #9A9A99">[MODELLO 3D DA CAD · VOLUMI INDICATIVI]</span>
+<span class="mono" style="position: absolute; right: 0; top: 0; font-size: 11px; color: #9A9A99">↔ TRASCINA PER RUOTARE</span>
+<span class="mono viewlbl" style="position: absolute; left: 0; top: 22px; font-size: 11px; color: #FF6B6B"></span>
+</div>
+<div role="group" aria-label="Scegli il modello" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px">
+<sc-for list="{{models}}" as="m" hint-placeholder-count="4">
+<button type="button" class="{{m.cls}}" onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="min-height: 44px; padding: 10px 18px; border: 1px solid #8A8A89; border-radius: 999px; background: transparent; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600">{{m.name}}</button>
+</sc-for>
+</div>
+</div>
+</div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 40px; border-top: 1px solid #333333; border-bottom: 1px solid #333333; overflow: hidden; background: #151515">
+<div class="tick mono" style="padding: 12px 0; font-size: 12px; color: #CFCFCF">
+<sc-for list="{{ticker}}" as="t" hint-placeholder-count="12"><span style="padding: 0 28px; white-space: nowrap"><span style="color: var(--acc)">▲</span> {{t}}</span></sc-for>
+</div>
+</div>
+</section>
+
+<!-- 02 DUE MONDI -->
+<section id="mondi" class="split peak" style="display: flex; height: 740px; background: #151515">
+<div class="lvl">▲ QUOTA +600 MM</div>
+<a class="half" href="#skyline" style="position: relative; overflow: hidden; background: var(--acc); color: #FFFFFF; text-decoration: none">
+<div class="skw" aria-hidden="true" style="position: absolute; right: -30px; bottom: -80px; font-size: 420px; font-weight: 800; letter-spacing: -.06em; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,.35)">A</div>
+<div style="position: absolute; left: 48px; top: 56px; right: 48px; max-width: 520px">
+<p class="mono" style="margin: 0 0 16px; font-size: 13px">02 · AERIAL PLATFORMS</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(40px, 4.4vw, 76px); line-height: .95; font-weight: 800; letter-spacing: -.045em">Lavoro in quota.</h2>
+<div class="h-more">
+<p style="margin: 20px 0 0; font-size: 18px">Cantieri, finiture interne, manutenzione: piattaforme ultracompatte fino a 6,6 metri di lavoro.</p>
+<p class="mono" style="margin: 16px 0 0; font-size: 12px">LEONARDO HD · HD 430 · LUI 460 · RESIDENTIAL 170</p>
+</div>
+</div>
+<svg aria-hidden="true" viewBox="0 0 200 220" style="position: absolute; left: 50%; bottom: 40px; width: 300px; margin-left: -150px">
+<rect x="128" y="110" width="10" height="62" fill="#151515"></rect>
+<g class="h-up">
+<rect x="130" y="66" width="6" height="84" fill="#3C3C3B"></rect>
+<line x1="66" y1="158" x2="66" y2="102" stroke="#FFFFFF" stroke-width="3.5"></line><line x1="126" y1="158" x2="126" y2="102" stroke="#FFFFFF" stroke-width="3.5"></line>
+<line x1="62" y1="103" x2="130" y2="103" stroke="#FFFFFF" stroke-width="4"></line><line x1="64" y1="130" x2="128" y2="130" stroke="#FFFFFF" stroke-width="3"></line>
+<rect x="62" y="148" width="68" height="10" fill="#FFFFFF"></rect>
+</g>
+<rect x="62" y="166" width="76" height="26" rx="4" fill="#151515"></rect>
+<circle cx="76" cy="196" r="7" fill="#000000"></circle><circle cx="124" cy="196" r="7" fill="#000000"></circle>
+</svg>
+<span class="h-arr" aria-hidden="true" style="position: absolute; right: 40px; top: 52px; width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF; color: var(--acc); display: flex; align-items: center; justify-content: center; font-size: 24px">→</span>
+</a>
+<a class="half" href="#skyline" style="position: relative; overflow: hidden; background: #F0F0F0; color: #151515; text-decoration: none">
+<div class="skw" aria-hidden="true" style="position: absolute; right: -30px; bottom: -80px; font-size: 420px; font-weight: 800; letter-spacing: -.06em; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px #CFCFCF">P</div>
+<div style="position: absolute; left: 48px; top: 56px; right: 48px; max-width: 520px">
+<p class="mono" style="margin: 0 0 16px; font-size: 13px; color: #C4000F">02 · PICKING SOLUTIONS</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(40px, 4.4vw, 76px); line-height: .95; font-weight: 800; letter-spacing: -.045em">Prelievo tra gli scaffali.</h2>
+<div class="h-more">
+<p style="margin: 20px 0 0; font-size: 18px; color: #3C3C3B">Magazzini, logistica, retail: commissionatori compatti, con Sprint che ruota nel proprio ingombro (0°).</p>
+<p class="mono" style="margin: 16px 0 0; font-size: 12px; color: #5E5E5D">SPRINT · LARGE PARCELS · TIRE LIFTER · SPIN-GO</p>
+</div>
+</div>
+<svg aria-hidden="true" viewBox="0 0 200 220" style="position: absolute; left: 50%; bottom: 40px; width: 300px; margin-left: -150px">
+<rect x="134" y="60" width="12" height="120" fill="#151515"></rect>
+<g class="h-up">
+<path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"></path>
+<rect x="52" y="124" width="80" height="12" fill="#151515"></rect>
+</g>
+<line x1="60" y1="136" x2="60" y2="152" stroke="#8A8A89" stroke-width="3"></line>
+<rect x="56" y="150" width="78" height="8" fill="#151515"></rect>
+<rect x="44" y="164" width="118" height="26" rx="10" fill="#FFFFFF" stroke="#151515" stroke-width="2"></rect>
+<circle cx="66" cy="196" r="7" fill="#151515"></circle><circle cx="140" cy="196" r="7" fill="#151515"></circle>
+</svg>
+<span class="h-arr" aria-hidden="true" style="position: absolute; right: 40px; top: 52px; width: 60px; height: 60px; border-radius: 50%; background: #151515; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 24px">→</span>
+</a>
+</section>
+
+<!-- GAMMA COMPLETA -->
+<section id="gamma" class="peak" style="background: #151515; color: #FFFFFF">
+<div class="lvl">▲ QUOTA +1.200 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 136px 56px 120px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 28px; margin-bottom: 48px">
+<div>
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #FF6B6B">03 · PRODOTTI — LA GAMMA COMPLETA</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em; max-width: 900px">Otto macchine, progettate attorno al tuo lavoro.</h2>
+</div>
+<div role="group" aria-label="Filtra la gamma" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{gfBtns}}" as="f" hint-placeholder-count="3"><button type="button" class="{{f.cls}}" onClick="{{f.pick}}" aria-pressed="{{f.on}}" style="min-height: 44px; padding: 10px 18px; border: 1px solid #8A8A89; border-radius: 999px; background: transparent; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600">{{f.label}}</button></sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px">
+<sc-for list="{{gamma}}" as="p" hint-placeholder-count="8">
+<article class="{{p.cls}}" style="{{p.delay}}">
+<div style="position: relative; height: 300px; overflow: hidden; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 32px 32px">
+<span class="gidx" aria-hidden="true" style="position: absolute; left: 16px; top: 4px; font-size: 96px; font-weight: 800; letter-spacing: -.05em; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px #444444">{{p.idx}}</span>
+<span class="mono" style="position: absolute; right: 16px; top: 16px; font-size: 11px; color: #FF6B6B">{{p.catLabel}}</span>
+<sc-if value="{{p.isLift}}" hint-placeholder-val="{{ true }}">
+<svg viewBox="0 0 200 220" aria-hidden="true" style="position: absolute; left: 50%; bottom: 0; width: 250px; margin-left: -125px">
+<rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect>
+<g class="g-up"><rect x="130" y="66" width="6" height="84" fill="#8A8A89"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="4"></line><line x1="64" y1="130" x2="128" y2="130" stroke="var(--acc)" stroke-width="3"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect></g>
+<rect x="62" y="166" width="76" height="26" rx="4" fill="#0E0E0E" stroke="#5A5A59"></rect><circle cx="76" cy="196" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle><circle cx="124" cy="196" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle>
+</svg>
+</sc-if>
+<sc-if value="{{p.isPicker}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 200 220" aria-hidden="true" style="position: absolute; left: 50%; bottom: 0; width: 250px; margin-left: -125px">
+<rect x="134" y="60" width="12" height="120" fill="#0E0E0E" stroke="#5A5A59"></rect>
+<g class="g-up"><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"></path><rect x="52" y="124" width="80" height="12" fill="#BDBDBD"></rect></g>
+<line x1="60" y1="136" x2="60" y2="152" stroke="#8A8A89" stroke-width="3"></line><rect x="56" y="150" width="78" height="8" fill="#BDBDBD"></rect><rect x="44" y="164" width="118" height="26" rx="10" fill="#EDEDED"></rect><rect x="56" y="172" width="34" height="4" fill="var(--acc)"></rect><circle cx="66" cy="196" r="7" fill="#000000"></circle><circle cx="140" cy="196" r="7" fill="#000000"></circle>
+</svg>
+</sc-if>
+</div>
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; border-top: 1px solid #333333">
+<div><h3 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05">{{p.name}}</h3><div class="mono" style="margin-top: 6px; font-size: 11px; color: #FF6B6B">{{p.tag}}</div></div>
+<p style="margin: 0; font-size: 15px; color: #BDBDBD; min-height: 46px">{{p.desc}}</p>
+<div class="mono" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; font-size: 10px; color: #9A9A99">
+<div>LAVORO<div style="font-size: 14px; color: #FFFFFF; margin-top: 2px">{{p.k1}}</div></div>
+<div>PIATTAF.<div style="font-size: 14px; color: #FFFFFF; margin-top: 2px">{{p.k2}}</div></div>
+<div>{{p.k3l}}<div style="font-size: 14px; color: #FFFFFF; margin-top: 2px">{{p.k3}}</div></div>
+</div>
+<div style="display: flex; gap: 8px; margin-top: auto; padding-top: 8px">
+<a class="btn btn-lw" href="#gamma" style="flex: 1 1 auto; justify-content: center; min-height: 44px; padding: 10px 14px; font-size: 14px">Scheda <span class="arr">→</span></a>
+<button type="button" class="{{p.cmpCls}}" onClick="{{p.toggleCmp}}" aria-pressed="{{p.inCmp}}" style="flex: 1 1 auto; min-height: 44px; padding: 10px 14px; border: 1px solid #8A8A89; background: transparent; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">{{p.cmpLabel}}</button>
+</div>
+</div>
+</article>
+</sc-for>
+</div>
+<sc-if value="{{hasCmp}}" hint-placeholder-val="{{ true }}">
+<div style="margin-top: 32px; background: #FFFFFF; color: #2B2B2A; padding: 32px; overflow-x: auto">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px">
+<span class="mono" style="font-size: 12px; color: #C4000F">CONFRONTO · {{cmpN}} / 3 MACCHINE</span>
+<button type="button" onClick="{{clearCmp}}" style="min-height: 44px; padding: 8px 16px; border: 1.5px solid #151515; background: transparent; color: #151515; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Svuota il confronto</button>
+</div>
+<div style="{{cmpGrid}}; display: grid; gap: 20px; min-width: 640px; padding-bottom: 14px; border-bottom: 1.5px solid #151515">
+<span></span>
+<sc-for list="{{cmpHead}}" as="h" hint-placeholder-count="2"><span style="font-size: 22px; font-weight: 800; letter-spacing: -.02em">{{h.name}}</span></sc-for>
+</div>
+<sc-for list="{{cmpRows}}" as="r" hint-placeholder-count="5">
+<div style="{{cmpGrid}}; display: grid; gap: 20px; min-width: 640px; padding: 14px 0; border-bottom: 1px solid #E2E2E2; align-items: center">
+<span class="mono" style="font-size: 11px; color: #5E5E5D">{{r.label}}</span>
+<sc-for list="{{r.cells}}" as="c" hint-placeholder-count="2"><div class="mono" style="font-size: 15px; font-weight: 500">{{c.v}}<span class="cbarx" style="{{c.bar}}"></span></div></sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{noCmp}}" hint-placeholder-val="{{ false }}">
+<p class="mono" style="margin: 32px 0 0; font-size: 13px; color: #9A9A99">SELEZIONA “+ CONFRONTA” SU 2 O 3 MACCHINE PER METTERLE A CONFRONTO.</p>
+</sc-if>
+</div>
+</section>
+
+<!-- 03 ANATOMIA -->
+<section class="peak" ref="{{refs.anat}}" data-k="anat" style="background: #FFFFFF; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +1.700 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 128px 56px; display: flex; flex-wrap: wrap; gap: 48px 80px; align-items: center">
+<div class="{{anatHead}}" style="flex: 1 1 440px; min-width: 0">
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #C4000F">03 · TECNOLOGIA — ANATOMIA</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em">Innovation in every detail.</h2>
+<p style="margin: 24px 0 32px; font-size: 19px; color: #4A4A49; max-width: 520px">Leonardo HD 430 si scompone sotto i tuoi occhi: ogni componente con la sua funzione e le sue quote. Poi torna intera, pronta a lavorare.</p>
+<button type="button" class="btn" onClick="{{toggleExplode}}" aria-pressed="{{exploded}}" style="min-height: 52px; padding: 14px 24px; border: 1.5px solid #151515; background: #151515; color: #FFFFFF; font: inherit; font-weight: 700; cursor: pointer">{{explodeLabel}}</button>
+<div class="mono" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 32px; margin-top: 48px; font-size: 12px; color: #5E5E5D; border-top: 1.5px solid #2B2B2A; padding-top: 22px; max-width: 520px">
+<div>ALTEZZA DI LAVORO<div style="font-size: 22px; color: #2B2B2A; font-weight: 500">6.300 mm</div></div>
+<div>ALTEZZA A RIPOSO<div style="font-size: 22px; color: #2B2B2A; font-weight: 500">1.758 mm</div></div>
+<div>PORTATA<div style="font-size: 22px; color: #2B2B2A; font-weight: 500">180 kg</div></div>
+<div>CICLO DI VITA<div style="font-size: 22px; color: #2B2B2A; font-weight: 500">fino a 30 anni</div></div>
+</div>
+</div>
+<div class="{{anatStage}}" style="flex: 0 1 640px; position: relative; width: 640px; max-width: 100%; height: 820px; background-image: linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(90deg, #F0F0F0 1px, transparent 1px); background-size: 40px 40px">
+<div class="lay" style="{{ly.wheels}}"><svg viewBox="0 0 640 820" width="640" height="820" aria-hidden="true" style="position: absolute; inset: 0"><circle cx="262" cy="706" r="13" fill="#151515" stroke="#8A8A89" stroke-width="3"></circle><circle cx="337" cy="706" r="13" fill="#151515" stroke="#8A8A89" stroke-width="3"></circle><g class="lab"><line x1="350" y1="706" x2="440" y2="706" stroke="#2B2B2A"></line><circle cx="350" cy="706" r="3.5" fill="var(--acc)"></circle></g></svg><div class="lab mono" style="position: absolute; left: 450px; top: 694px; font-size: 12px; line-height: 1.3"><div style="color: #5E5E5D">RUOTE · STABILITÀ</div><div style="font-size: 17px; font-weight: 500">1,5° pendenza max</div></div></div>
+<div class="lay" style="{{ly.chassis}}"><svg viewBox="0 0 640 820" width="640" height="820" aria-hidden="true" style="position: absolute; inset: 0"><rect x="241" y="664" width="117" height="36" rx="5" fill="#2B2B2A"></rect><rect x="252" y="674" width="40" height="5" fill="var(--acc)"></rect><g class="lab"><line x1="358" y1="682" x2="440" y2="682" stroke="#2B2B2A"></line><circle cx="358" cy="682" r="3.5" fill="var(--acc)"></circle></g></svg><div class="lab mono" style="position: absolute; left: 450px; top: 670px; font-size: 12px; line-height: 1.3"><div style="color: #5E5E5D">TELAIO COMPATTO</div><div style="font-size: 17px; font-weight: 500">760 × 1.195 mm</div></div></div>
+<div class="lay" style="{{ly.mast}}"><svg viewBox="0 0 640 820" width="640" height="820" aria-hidden="true" style="position: absolute; inset: 0"><rect x="352" y="552" width="16" height="112" fill="#3C3C3B"></rect><rect x="355" y="552" width="10" height="112" fill="#878786"></rect><g class="lab"><line x1="368" y1="600" x2="440" y2="600" stroke="#2B2B2A"></line><circle cx="368" cy="600" r="3.5" fill="var(--acc)"></circle></g></svg><div class="lab mono" style="position: absolute; left: 450px; top: 588px; font-size: 12px; line-height: 1.3"><div style="color: #5E5E5D">MAST VERTICALE</div><div style="font-size: 17px; font-weight: 500">4.300 mm piattaforma</div></div></div>
+<div class="lay" style="{{ly.cage}}"><svg viewBox="0 0 640 820" width="640" height="820" aria-hidden="true" style="position: absolute; inset: 0"><line x1="240" y1="656" x2="240" y2="549" stroke="var(--acc)" stroke-width="5"></line><line x1="350" y1="656" x2="350" y2="549" stroke="var(--acc)" stroke-width="5"></line><line x1="295" y1="640" x2="295" y2="549" stroke="var(--acc)" stroke-width="3"></line><line x1="236" y1="551" x2="354" y2="551" stroke="var(--acc)" stroke-width="6"></line><line x1="238" y1="600" x2="352" y2="600" stroke="var(--acc)" stroke-width="4"></line><rect x="236" y="638" width="118" height="18" fill="var(--acc)"></rect><rect x="232" y="656" width="126" height="8" fill="#1A1A1A"></rect><g class="lab"><line x1="130" y1="620" x2="236" y2="620" stroke="#2B2B2A"></line><circle cx="236" cy="620" r="3.5" fill="var(--acc)"></circle></g></svg><div class="lab mono" style="position: absolute; left: 0; top: 608px; width: 122px; text-align: right; font-size: 12px; line-height: 1.3"><div style="color: #5E5E5D">PIATTAFORMA</div><div style="font-size: 17px; font-weight: 500">180 kg</div></div></div>
+<div class="lay" style="{{ly.ctrl}}"><svg viewBox="0 0 640 820" width="640" height="820" aria-hidden="true" style="position: absolute; inset: 0"><rect x="318" y="534" width="22" height="16" rx="2" fill="#1A1A1A"></rect><g class="lab"><line x1="340" y1="542" x2="440" y2="542" stroke="#2B2B2A"></line><circle cx="340" cy="542" r="3.5" fill="var(--acc)"></circle></g></svg><div class="lab mono" style="position: absolute; left: 450px; top: 530px; font-size: 12px; line-height: 1.3"><div style="color: #5E5E5D">COMANDI</div><div style="font-size: 17px; font-weight: 500">[DETTAGLIO DA SCHEDA]</div></div></div>
+<svg viewBox="0 0 640 820" width="640" height="820" aria-hidden="true" style="position: absolute; inset: 0"><line x1="120" y1="720" x2="520" y2="720" stroke="#2B2B2A" stroke-width="2"></line></svg>
+<span class="mono" style="position: absolute; left: 12px; top: 10px; font-size: 11px; color: #5E5E5D">FIG. 03 — VISTA ESPLOSA · NON IN SCALA</span>
+</div>
+</div>
+</section>
+
+<!-- TECNOLOGIE -->
+<section id="tecnologie" class="peak" style="background: #151515; color: #FFFFFF">
+<div class="lvl">▲ QUOTA +2.400 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 136px 56px 128px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 56px">
+<div>
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #FF6B6B">04 · TECNOLOGIA E INNOVAZIONE</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em; max-width: 900px">Le tecnologie che ci portano in alto.</h2>
+</div>
+<button type="button" onClick="{{ttToggle}}" aria-label="{{ttPlayLabel}}" style="width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid #FFFFFF; background: transparent; color: #FFFFFF; font-size: 13px; cursor: pointer">{{ttPlayIcon}}</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 48px">
+<div role="group" aria-label="Tecnologie" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; border-top: 1px solid #333333; align-self: flex-start">
+<sc-for list="{{techTabs}}" as="x" hint-placeholder-count="5">
+<button type="button" class="{{x.cls}}" onClick="{{x.pick}}" aria-pressed="{{x.on}}" style="position: relative; display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; align-items: center; min-height: 76px; padding: 18px 20px; border: 0; border-bottom: 1px solid #333333; background: transparent; color: #8A8A89; font: inherit; text-align: left">
+<span class="mono" style="font-size: 12px">{{x.n}}</span><span style="font-size: 21px; font-weight: 800; letter-spacing: -.02em">{{x.t}}</span>
+<span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: -1px; height: 2px"><span class="tf" style="display: block; height: 100%; background: var(--acc)"></span></span>
+</button>
+</sc-for>
+</div>
+<div style="flex: 2.4 1 640px; min-width: 0; min-height: 440px">
+
+<div class="{{tp0}}" style="flex-wrap: wrap; gap: 40px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0; background: #1E1E1E; border: 1px solid #333333; position: relative">
+<span class="mono" style="position: absolute; left: 14px; top: 12px; font-size: 11px; color: #9A9A99">FIG. T1 — MAST VERTICALE</span>
+<svg viewBox="0 0 480 400" role="img" aria-label="Il mast verticale si estende a sezioni sollevando la piattaforma" style="display: block; width: 100%; height: auto">
+<line x1="40" y1="370" x2="440" y2="370" stroke="#8A8A89" stroke-width="2"></line>
+<rect x="290" y="210" width="20" height="110" fill="#3C3C3B"></rect>
+<g class="a70"><rect x="292" y="212" width="16" height="108" fill="#555554"></rect></g>
+<g class="a140"><rect x="294" y="214" width="12" height="106" fill="#6E6E6D"></rect></g>
+<g class="a210"><rect x="296" y="216" width="8" height="104" fill="#8A8A89"></rect><rect x="176" y="300" width="114" height="8" fill="#EDEDED"></rect><rect x="180" y="288" width="106" height="12" fill="var(--acc)"></rect><line x1="184" y1="300" x2="184" y2="240" stroke="var(--acc)" stroke-width="4"></line><line x1="282" y1="300" x2="282" y2="240" stroke="var(--acc)" stroke-width="4"></line><line x1="180" y1="242" x2="286" y2="242" stroke="var(--acc)" stroke-width="5"></line><line x1="182" y1="270" x2="284" y2="270" stroke="var(--acc)" stroke-width="3"></line></g>
+<rect x="170" y="318" width="140" height="40" rx="5" fill="#2B2B2A" stroke="#555555"></rect>
+<circle cx="195" cy="362" r="10" fill="#0E0E0E" stroke="#8A8A89" stroke-width="2"></circle><circle cx="285" cy="362" r="10" fill="#0E0E0E" stroke="#8A8A89" stroke-width="2"></circle>
+<rect x="379.5" y="300" width="1" height="70" fill="#FF6B6B"></rect>
+<rect class="adim" x="379.5" y="90" width="1" height="210" fill="#FF6B6B"></rect>
+<text x="392" y="236" fill="#FF6B6B" font-family="IBM Plex Mono, monospace" font-size="12">↑ QUOTA</text>
+</svg>
+</div>
+<div style="flex: 1 1 300px; min-width: 0">
+<div style="font-size: clamp(72px, 7vw, 120px); font-weight: 800; letter-spacing: -.055em; line-height: 1">6.620<span style="font-size: 28px; font-weight: 500; color: #FF6B6B"> mm</span></div>
+<h3 style="margin: 18px 0 10px; font-size: 28px; font-weight: 800; letter-spacing: -.02em">Sollevamento verticale</h3>
+<p style="margin: 0; font-size: 18px; color: #CFCFCF">Il mast verticale porta l’operatore in quota senza sbracci laterali: fino a 4.620 mm di piattaforma e 6.620 mm di altezza di lavoro con Lui 460.</p>
+<p class="mono" style="margin: 18px 0 0; font-size: 12px; color: #FF6B6B">LUI 460 · LEONARDO HD 430 · LEONARDO HD</p>
+</div>
+</div>
+
+<div class="{{tp1}}" style="flex-wrap: wrap; gap: 40px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0; background: #1E1E1E; border: 1px solid #333333; position: relative">
+<span class="mono" style="position: absolute; left: 14px; top: 12px; font-size: 11px; color: #9A9A99">FIG. T2 — BATTERIE HIGH-CYCLE</span>
+<svg viewBox="0 0 480 400" role="img" aria-label="Una batteria si scarica mentre il contatore dei cicli di sollevamento arriva a 200" style="display: block; width: 100%; height: auto">
+<rect x="90" y="130" width="280" height="140" rx="14" fill="none" stroke="#FFFFFF" stroke-width="4"></rect>
+<rect x="370" y="175" width="18" height="50" rx="3" fill="#FFFFFF"></rect>
+<rect class="abatt" x="102" y="142" width="256" height="116" rx="6" fill="var(--acc)"></rect>
+<g stroke="#1E1E1E" stroke-width="5"><line x1="153" y1="142" x2="153" y2="258"></line><line x1="204" y1="142" x2="204" y2="258"></line><line x1="256" y1="142" x2="256" y2="258"></line><line x1="307" y1="142" x2="307" y2="258"></line></g>
+<polygon points="236,160 214,206 236,206 226,242 256,190 234,190 246,160" fill="#FFFFFF"></polygon>
+<text x="240" y="320" text-anchor="middle" fill="#9A9A99" font-family="IBM Plex Mono, monospace" font-size="13">UNA SOLA CARICA · LUI 460</text>
+</svg>
+<div class="mono" style="position: absolute; right: 16px; top: 40px; text-align: right"><div style="font-size: 34px; font-weight: 500; color: #FFFFFF"><span class="cyc"></span></div><div style="font-size: 11px; color: #9A9A99">CICLI DI SOLLEVAMENTO</div></div>
+</div>
+<div style="flex: 1 1 300px; min-width: 0">
+<div style="font-size: clamp(72px, 7vw, 120px); font-weight: 800; letter-spacing: -.055em; line-height: 1">200<span style="font-size: 28px; font-weight: 500; color: #FF6B6B"> cicli</span></div>
+<h3 style="margin: 18px 0 10px; font-size: 28px; font-weight: 800; letter-spacing: -.02em">Batterie High-Cycle</h3>
+<p style="margin: 0; font-size: 18px; color: #CFCFCF">Con una sola carica Lui 460 offre fino a 200 cicli di sollevamento oppure 9 km di percorrenza.</p>
+<p class="mono" style="margin: 18px 0 0; font-size: 12px; color: #FF6B6B">LUI 460 · 200 CICLI O 9 KM</p>
+</div>
+</div>
+
+<div class="{{tp2}}" style="flex-wrap: wrap; gap: 40px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0; background: #1E1E1E; border: 1px solid #333333; position: relative">
+<span class="mono" style="position: absolute; left: 14px; top: 12px; font-size: 11px; color: #9A9A99">FIG. T3 — STERZATA 0° · VISTA DALL’ALTO</span>
+<svg viewBox="0 0 480 400" role="img" aria-label="Vista dall’alto: Sprint ruota su sé stesso in una corsia stretta" style="display: block; width: 100%; height: auto">
+<rect x="40" y="40" width="100" height="330" fill="#262626" stroke="#555555"></rect><rect x="340" y="40" width="100" height="330" fill="#262626" stroke="#555555"></rect>
+<g stroke="#555555"><line x1="40" y1="122" x2="140" y2="122"></line><line x1="40" y1="204" x2="140" y2="204"></line><line x1="40" y1="286" x2="140" y2="286"></line><line x1="340" y1="122" x2="440" y2="122"></line><line x1="340" y1="204" x2="440" y2="204"></line><line x1="340" y1="286" x2="440" y2="286"></line></g>
+<circle cx="240" cy="200" r="84" fill="none" stroke="var(--acc)" stroke-width="2" stroke-dasharray="4 7"></circle>
+<g class="aspin"><rect x="192" y="138" width="96" height="124" rx="10" fill="#EDEDED"></rect><rect x="202" y="150" width="76" height="58" fill="#151515"></rect><rect x="206" y="230" width="68" height="22" rx="4" fill="#8A8A89"></rect><polygon points="240,120 230,134 250,134" fill="var(--acc)"></polygon></g>
+<circle cx="240" cy="200" r="4" fill="var(--acc)"></circle>
+</svg>
+</div>
+<div style="flex: 1 1 300px; min-width: 0">
+<div style="font-size: clamp(72px, 7vw, 120px); font-weight: 800; letter-spacing: -.055em; line-height: 1">0<span style="font-size: 28px; font-weight: 500; color: #FF6B6B">°</span></div>
+<h3 style="margin: 18px 0 10px; font-size: 28px; font-weight: 800; letter-spacing: -.02em">Sterzata 0°</h3>
+<p style="margin: 0; font-size: 18px; color: #CFCFCF">Sprint ruota su sé stesso nel proprio ingombro: nessuna manovra tra scaffalature e corsie strette.</p>
+<p class="mono" style="margin: 18px 0 0; font-size: 12px; color: #FF6B6B">SPRINT · PICKING SOLUTIONS</p>
+</div>
+</div>
+
+<div class="{{tp3}}" style="flex-wrap: wrap; gap: 40px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0; background: #1E1E1E; border: 1px solid #333333; position: relative; overflow: hidden">
+<span class="mono" style="position: absolute; left: 14px; top: 12px; font-size: 11px; color: #9A9A99; z-index: 1">FIG. T4 — INGOMBRO · VISTA DALL’ALTO</span>
+<svg viewBox="0 0 480 400" role="img" aria-label="Vista dall’alto: la macchina, larga 760 mm, attraversa un passaggio stretto" style="display: block; width: 100%; height: auto">
+<rect x="0" y="0" width="186" height="400" fill="#2B2B2A"></rect><rect x="294" y="0" width="186" height="400" fill="#2B2B2A"></rect>
+<line x1="186" y1="0" x2="186" y2="400" stroke="#8A8A89" stroke-width="2"></line><line x1="294" y1="0" x2="294" y2="400" stroke="#8A8A89" stroke-width="2"></line>
+<g class="apass"><rect x="202" y="150" width="76" height="110" rx="8" fill="#EDEDED"></rect><rect x="210" y="160" width="60" height="8" fill="var(--acc)"></rect><line x1="202" y1="276" x2="278" y2="276" stroke="#FF6B6B" stroke-width="1.5"></line><line x1="202" y1="270" x2="202" y2="282" stroke="#FF6B6B" stroke-width="1.5"></line><line x1="278" y1="270" x2="278" y2="282" stroke="#FF6B6B" stroke-width="1.5"></line><text x="240" y="296" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono, monospace" font-size="12">760</text></g>
+</svg>
+</div>
+<div style="flex: 1 1 300px; min-width: 0">
+<div style="font-size: clamp(72px, 7vw, 120px); font-weight: 800; letter-spacing: -.055em; line-height: 1">760<span style="font-size: 28px; font-weight: 500; color: #FF6B6B"> mm</span></div>
+<h3 style="margin: 18px 0 10px; font-size: 28px; font-weight: 800; letter-spacing: -.02em">Ingombro ridotto</h3>
+<p style="margin: 0; font-size: 18px; color: #CFCFCF">Una base larga 760 mm su Leonardo HD 430 e Lui 460: macchine pensate per muoversi negli spazi interni più ristretti.</p>
+<p class="mono" style="margin: 18px 0 0; font-size: 12px; color: #FF6B6B">LEONARDO HD 430 · LUI 460</p>
+</div>
+</div>
+
+<div class="{{tp4}}" style="flex-wrap: wrap; gap: 40px; align-items: center">
+<div style="flex: 1 1 420px; min-width: 0; background: #1E1E1E; border: 1px solid #333333; position: relative">
+<span class="mono" style="position: absolute; left: 14px; top: 12px; font-size: 11px; color: #9A9A99">FIG. T5 — INCLINOMETRO · SCALA ESAGERATA</span>
+<svg viewBox="0 0 480 400" role="img" aria-label="Un inclinometro oscilla entro il limite di pendenza ammesso" style="display: block; width: 100%; height: auto">
+<path d="M100 260 A140 140 0 0 1 380 260" fill="none" stroke="#555555" stroke-width="3"></path>
+<line x1="240" y1="120" x2="240" y2="142" stroke="#FFFFFF" stroke-width="3"></line>
+<line x1="273.9" y1="124.2" x2="269" y2="143.6" stroke="var(--acc)" stroke-width="4"></line><line x1="206.1" y1="124.2" x2="211" y2="143.6" stroke="var(--acc)" stroke-width="4"></line>
+<g class="aneedle"><line x1="240" y1="260" x2="240" y2="140" stroke="var(--acc)" stroke-width="4"></line></g>
+<circle cx="240" cy="260" r="9" fill="#FFFFFF"></circle>
+<text x="240" y="310" text-anchor="middle" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="16">LIMITE ± 1,5°</text>
+<text x="196" y="112" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono, monospace" font-size="11">−1,5°</text><text x="284" y="112" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono, monospace" font-size="11">+1,5°</text>
+</svg>
+</div>
+<div style="flex: 1 1 300px; min-width: 0">
+<div style="font-size: clamp(72px, 7vw, 120px); font-weight: 800; letter-spacing: -.055em; line-height: 1">1,5<span style="font-size: 28px; font-weight: 500; color: #FF6B6B">°</span></div>
+<h3 style="margin: 18px 0 10px; font-size: 28px; font-weight: 800; letter-spacing: -.02em">Stabilità e certificazioni</h3>
+<p style="margin: 0; font-size: 18px; color: #CFCFCF">Pendenza massima ammessa in quota di 1,5° e macchine conformi alle principali norme internazionali.</p>
+<div class="mono" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; font-size: 11px">
+<span style="border: 1px solid #555555; padding: 6px 10px">ISO 9001:2015</span><span style="border: 1px solid #555555; padding: 6px 10px">CE</span><span style="border: 1px solid #555555; padding: 6px 10px">UL / CSA</span><span style="border: 1px solid #555555; padding: 6px 10px">ANSI-SAIA A92.20</span>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<!-- OLTRE LA SCALA -->
+<section id="innovazione" class="peak" ref="{{refs.proof}}" data-k="proof" style="background: #F0F0F0; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +2.900 MM</div>
+<div class="{{pfCls}}" style="max-width: 1680px; margin: 0 auto; padding: 136px 56px 120px; display: flex; flex-wrap: wrap; gap: 64px; align-items: flex-start">
+<div style="flex: 1 1 440px; min-width: 0">
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #C4000F">INNOVAZIONE — I NUMERI</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em">Oltre la scala.</h2>
+<p style="margin: 24px 0 0; font-size: 19px; color: #4A4A49; max-width: 520px">Una piattaforma Bravi cambia il modo di lavorare in quota: meno spostamenti, più produttività, più sicurezza per chi lavora.</p>
+<div style="margin-top: 56px; border-top: 2px solid #151515; padding-top: 24px">
+<div style="font-size: clamp(96px, 10vw, 180px); font-weight: 800; letter-spacing: -.06em; line-height: .9">81<span style="color: var(--acc)">%</span></div>
+<p style="margin: 12px 0 0; font-size: 18px; max-width: 420px">dei cantieri ha soffitti sotto i 5 metri: l’altezza per cui è nata Leonardo HD.</p>
+</div>
+</div>
+<div style="flex: 1.3 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 44px">
+<div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid #CFCFCF; padding-bottom: 12px"><h3 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.02em">Tempo di riposizionamento</h3><span style="font-size: 56px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: #C4000F">−50%</span></div>
+<div class="mono" style="display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px 16px; align-items: center; margin-top: 16px; font-size: 12px">
+<span>SCALA</span><div style="height: 14px; background: #DADADA"><div class="pbar" style="height: 100%; width: 100%; background: #5E5E5D"></div></div>
+<span style="color: #C4000F">LEONARDO HD</span><div style="height: 14px; background: #DADADA"><div class="pbar" style="height: 100%; width: 50%; background: var(--acc); transition-delay: .3s"></div></div>
+</div>
+</div>
+<div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid #CFCFCF; padding-bottom: 12px"><h3 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.02em">Produttività</h3><span style="font-size: 56px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: #C4000F">+30%</span></div>
+<div class="mono" style="display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px 16px; align-items: center; margin-top: 16px; font-size: 12px">
+<span>SCALA</span><div style="height: 14px; background: #DADADA"><div class="pbar" style="height: 100%; width: 77%; background: #5E5E5D; transition-delay: .5s"></div></div>
+<span style="color: #C4000F">LEONARDO HD 430</span><div style="height: 14px; background: #DADADA"><div class="pbar" style="height: 100%; width: 100%; background: var(--acc); transition-delay: .8s"></div></div>
+</div>
+</div>
+<div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid #CFCFCF; padding-bottom: 12px"><h3 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.02em">Rischio di infortunio da caduta</h3><span style="font-size: 56px; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: #C4000F">−75%</span></div>
+<div class="mono" style="display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px 16px; align-items: center; margin-top: 16px; font-size: 12px">
+<span>SCALA</span><div style="height: 14px; background: #DADADA"><div class="pbar" style="height: 100%; width: 100%; background: #5E5E5D; transition-delay: 1s"></div></div>
+<span style="color: #C4000F">RESIDENTIAL 170</span><div style="height: 14px; background: #DADADA"><div class="pbar" style="height: 100%; width: 25%; background: var(--acc); transition-delay: 1.3s"></div></div>
+</div>
+</div>
+<p class="mono" style="margin: 0; font-size: 11px; color: #5E5E5D">FONTE: SCHEDE PRODOTTO BRAVI PLATFORMS · VALORI RELATIVI ALLA SCALA</p>
+</div>
+</div>
+</section>
+
+<!-- 04 SKYLINE -->
+<section id="skyline" class="peak" ref="{{refs.sky}}" data-k="sky" style="background: #F0F0F0; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +3.500 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 128px 56px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 56px">
+<div>
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #C4000F">04 · PRODOTTI — LA GAMMA IN SCALA</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em">Designed around your work.</h2>
+</div>
+<div role="group" aria-label="Misura" style="display: flex; border: 1.5px solid #151515">
+<button type="button" class="{{mWork}}" onClick="{{setWork}}" aria-pressed="{{isWork}}" style="min-height: 48px; padding: 12px 20px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 15px; font-weight: 700">Altezza di lavoro</button>
+<button type="button" class="{{mPlat}}" onClick="{{setPlat}}" aria-pressed="{{isPlat}}" style="min-height: 48px; padding: 12px 20px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 15px; font-weight: 700">Altezza piattaforma</button>
+</div>
+</div>
+<div class="{{skyCls}}" style="display: flex; flex-wrap: wrap; gap: 40px">
+<div style="flex: 3 1 760px; min-width: 0; position: relative; height: 520px; border-bottom: 2px solid #151515; overflow-x: auto">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 420px; background-image: repeating-linear-gradient(to top, #CFCFCF 0, #CFCFCF 1px, transparent 1px, transparent 60px)"></div>
+<span class="mono" aria-hidden="true" style="position: absolute; left: 0; bottom: 120px; font-size: 10px; color: #5E5E5D">2.000</span>
+<span class="mono" aria-hidden="true" style="position: absolute; left: 0; bottom: 240px; font-size: 10px; color: #5E5E5D">4.000</span>
+<span class="mono" aria-hidden="true" style="position: absolute; left: 0; bottom: 360px; font-size: 10px; color: #5E5E5D">6.000</span>
+<div style="position: absolute; left: 48px; right: 0; bottom: 0; top: 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; min-width: 640px">
+<sc-for list="{{sky}}" as="b" hint-placeholder-count="8">
+<button type="button" class="{{b.btnCls}}" onClick="{{b.pick}}" onMouseEnter="{{b.pick}}" aria-pressed="{{b.on}}" aria-label="{{b.aria}}" style="flex: 1 1 0; min-width: 56px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer">
+<span class="bval mono" style="font-size: 12px; font-weight: 500">{{b.val}}</span>
+<span class="bar" style="{{b.barStyle}}"></span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="flex: 1 1 300px; min-width: 0; background: #FFFFFF; padding: 32px; align-self: stretch; display: flex; flex-direction: column; gap: 14px">
+<span class="mono" style="font-size: 12px; color: #C4000F">{{skyA.cat}}</span>
+<h3 style="margin: 0; font-size: 36px; font-weight: 800; letter-spacing: -.035em; line-height: 1">{{skyA.name}}</h3>
+<p style="margin: 0; font-size: 16px; color: #4A4A49">{{skyA.desc}}</p>
+<div class="mono" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 11px; color: #5E5E5D; border-top: 1px solid #E2E2E2; padding-top: 14px">
+<div>LAVORO<div style="font-size: 20px; font-weight: 500; color: #2B2B2A">{{skyA.work}}</div></div>
+<div>PIATTAFORMA<div style="font-size: 20px; font-weight: 500; color: #2B2B2A">{{skyA.plat}}</div></div>
+</div>
+<a class="btn btn-red" href="#skyline" style="margin-top: auto; align-self: flex-start; padding: 14px 20px; font-size: 16px">Scheda tecnica <span class="arr">→</span></a>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin: 14px 0 0 48px; max-width: calc(75% - 48px)" class="mono">
+<sc-for list="{{sky}}" as="b" hint-placeholder-count="8"><span style="flex: 1 1 0; min-width: 56px; text-align: center; font-size: 10px; color: #5E5E5D">{{b.short}}</span></sc-for>
+</div>
+</div>
+</section>
+
+<!-- 05 FINDER -->
+<section id="finder" class="peak" style="background: #FFFFFF; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +4.300 MM</div>
+<div style="max-width: 1200px; margin: 0 auto; padding: 128px 56px">
+<div style="text-align: center; margin-bottom: 48px">
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #C4000F">PRODUCT FINDER · 3 PASSI</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(40px, 4.4vw, 72px); line-height: 1; font-weight: 800; letter-spacing: -.045em">Trova la tua macchina in 30 secondi.</h2>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 24px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+<div><div style="height: 4px; background: {{s.color}}; transition: background-color .4s"></div><div class="mono" style="margin-top: 10px; font-size: 12px; color: {{s.text}}">{{s.label}}</div></div>
+</sc-for>
+</div>
+<div style="overflow: hidden; border: 1px solid #E2E2E2; background: #F7F7F7">
+<div class="ftrack" style="{{trackStyle}}">
+<div class="fpanel" style="padding: 48px">
+<h3 style="margin: 0 0 28px; font-size: 30px; font-weight: 800; letter-spacing: -.03em">In quale settore lavori?</h3>
+<div role="group" aria-label="Settore" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+<sc-for list="{{fSectors}}" as="s" hint-placeholder-count="6">
+<button type="button" class="{{s.cls}}" onClick="{{s.pick}}" aria-pressed="{{s.on}}" style="min-height: 72px; padding: 16px 20px; border: 1.5px solid #8A8A89; background: #FFFFFF; color: inherit; font: inherit; text-align: left"><span class="mono" style="display: block; font-size: 11px; opacity: .7">{{s.n}}</span><span style="display: block; font-size: 18px; font-weight: 700">{{s.t}}</span></button>
+</sc-for>
+</div>
+</div>
+<div class="fpanel" style="padding: 48px">
+<h3 style="margin: 0 0 8px; font-size: 30px; font-weight: 800; letter-spacing: -.03em">A che altezza devi lavorare?</h3>
+<p style="margin: 0 0 32px; font-size: 16px; color: #4A4A49">Indica l’altezza di lavoro: il punto più alto che devi raggiungere con le mani.</p>
+<div style="font-size: clamp(56px, 6vw, 96px); font-weight: 800; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums">{{needTxt}}<span style="font-size: 24px; font-weight: 500"> mm</span></div>
+<label for="need" class="mono" style="display: block; margin-top: 24px; font-size: 12px; color: #5E5E5D">ALTEZZA DI LAVORO — 2.000 / 6.600 mm</label>
+<input id="need" type="range" min="2000" max="6600" step="100" value="{{need}}" onChange="{{onNeed}}">
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px">
+<button type="button" onClick="{{back}}" style="min-height: 52px; padding: 14px 22px; border: 1.5px solid #151515; background: transparent; color: #151515; font: inherit; font-weight: 700; cursor: pointer">← Indietro</button>
+<button type="button" class="btn btn-red" onClick="{{showRes}}" style="min-height: 52px; padding: 14px 24px; border: 0; font: inherit; font-weight: 700; cursor: pointer">Mostra la soluzione <span class="arr">→</span></button>
+</div>
+</div>
+<div class="fpanel" style="padding: 48px">
+<sc-if value="{{hasRes}}" hint-placeholder-val="{{ true }}">
+<div class="fres" style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center">
+<div style="flex: 0 0 240px; height: 260px; background: #FFFFFF; border: 1px solid #E2E2E2; display: flex; align-items: flex-end; justify-content: center">
+<sc-if value="{{res.isLift}}" hint-placeholder-val="{{ true }}">
+<svg viewBox="0 0 200 220" aria-hidden="true" style="display: block; width: 200px; height: auto"><rect x="128" y="110" width="10" height="62" fill="#3C3C3B"></rect><rect x="130" y="70" width="6" height="80" fill="#6E6E6D"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="4"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#2B2B2A"></rect><circle cx="76" cy="196" r="7" fill="#151515"></circle><circle cx="124" cy="196" r="7" fill="#151515"></circle></svg>
+</sc-if>
+<sc-if value="{{res.isPicker}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 200 220" aria-hidden="true" style="display: block; width: 200px; height: auto"><rect x="134" y="60" width="12" height="120" fill="#1A1A1A"></rect><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"></path><rect x="52" y="124" width="80" height="12" fill="#1A1A1A"></rect><rect x="56" y="150" width="78" height="8" fill="#1A1A1A"></rect><rect x="44" y="164" width="118" height="26" rx="10" fill="#EDEDED" stroke="#2B2B2A" stroke-width="2"></rect><circle cx="66" cy="196" r="7" fill="#151515"></circle><circle cx="140" cy="196" r="7" fill="#151515"></circle></svg>
+</sc-if>
+</div>
+<div style="flex: 1 1 360px; min-width: 0">
+<p class="mono" style="margin: 0 0 10px; font-size: 12px; color: #C4000F">LA SOLUZIONE CONSIGLIATA · {{res.sector}}</p>
+<h3 style="margin: 0; font-size: clamp(40px, 4vw, 64px); font-weight: 800; letter-spacing: -.045em; line-height: 1">{{res.name}}</h3>
+<p style="margin: 16px 0 0; font-size: 18px; color: #4A4A49">{{res.desc}}</p>
+<p class="mono" style="margin: 16px 0 0; font-size: 13px">{{res.fit}}</p>
+<p class="mono" style="margin: 6px 0 0; font-size: 12px; color: #5E5E5D">{{res.alt}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px">
+<a class="btn btn-red" href="#finder" style="padding: 15px 22px">Scheda tecnica <span class="arr">→</span></a>
+<button type="button" onClick="{{restart}}" style="min-height: 52px; padding: 14px 22px; border: 1.5px solid #151515; background: transparent; color: #151515; font: inherit; font-weight: 700; cursor: pointer">↺ Ricomincia</button>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 06 STORIA ORIZZONTALE -->
+<section id="storia" class="peak" ref="{{refs.story}}" style="background: #151515; color: #FFFFFF; overflow: hidden">
+<div class="lvl">▲ QUOTA +4.620 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 128px 56px 112px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 48px">
+<div>
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #FF6B6B">05 · STORIA E PRODUZIONE</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em; max-width: 900px">Built on experience. Driven by innovation.</h2>
+</div>
+<div style="display: flex; gap: 10px">
+<button type="button" onClick="{{hPrev}}" aria-label="Tappa precedente" style="width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid #FFFFFF; background: transparent; color: #FFFFFF; font-size: 22px; cursor: pointer">←</button>
+<button type="button" onClick="{{hNext}}" aria-label="Tappa successiva" style="width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--acc); color: #FFFFFF; font-size: 22px; cursor: pointer">→</button>
+</div>
+</div>
+<div class="htrack" ref="{{refs.track}}" onScroll="{{onTrack}}" tabindex="0" aria-label="Tappe della storia Bravi, scorri orizzontalmente">
+<sc-for list="{{history}}" as="m" hint-placeholder-count="4">
+<article class="hcard" style="border-top: 2px solid #333333; padding-top: 24px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span class="mono" style="font-size: 12px; color: #9A9A99">{{m.i}} / 04</span><span class="mono" style="font-size: 12px; color: #FF6B6B">{{m.tag}}</span></div>
+<div style="font-size: clamp(96px, 9vw, 160px); font-weight: 800; letter-spacing: -.06em; line-height: 1; margin-top: 8px">{{m.y}}</div>
+<div class="cut" style="position: relative; height: 260px; margin-top: 20px; overflow: hidden">
+<div style="position: absolute; inset: 0">
+<sc-if value="{{m.s0}}" hint-placeholder-val="{{ true }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="1980: prima piattaforma mobile sotto un controsoffitto in posa, con una scala appoggiata alla parete" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="grain" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#000000" opacity=".3"></circle><circle cx="3" cy="3" r=".5" fill="#FFFFFF" opacity=".08"></circle></pattern><radialGradient id="vig" cx="50%" cy="50%" r="70%"><stop offset="55%" stop-color="#000000" stop-opacity="0"></stop><stop offset="100%" stop-color="#000000" stop-opacity=".6"></stop></radialGradient></defs>
+<rect width="560" height="260" fill="#3B362D"></rect>
+<rect width="560" height="46" fill="#2E2A23"></rect><rect x="200" y="0" width="80" height="46" fill="#1E1B16"></rect>
+<g stroke="#CBBFA6" stroke-opacity=".55"><line x1="0" y1="46" x2="560" y2="46"></line><line x1="40" y1="0" x2="40" y2="46"></line><line x1="120" y1="0" x2="120" y2="46"></line><line x1="200" y1="0" x2="200" y2="46"></line><line x1="280" y1="0" x2="280" y2="46"></line><line x1="360" y1="0" x2="360" y2="46"></line><line x1="440" y1="0" x2="440" y2="46"></line><line x1="520" y1="0" x2="520" y2="46"></line></g>
+<rect x="440" y="46" width="120" height="184" fill="#4C463A"></rect>
+<rect x="0" y="230" width="560" height="30" fill="#2A261F"></rect><line x1="0" y1="230" x2="560" y2="230" stroke="#CBBFA6"></line>
+<g stroke="#CBBFA6" fill="none"><rect x="190" y="120" width="110" height="104" stroke-width="3"></rect><line x1="190" y1="224" x2="300" y2="120" stroke-width="1.5"></line><line x1="190" y1="120" x2="300" y2="224" stroke-width="1.5"></line><line x1="182" y1="120" x2="308" y2="120" stroke-width="5"></line><line x1="190" y1="120" x2="190" y2="80" stroke-width="3"></line><line x1="300" y1="120" x2="300" y2="80" stroke-width="3"></line><line x1="186" y1="80" x2="304" y2="80" stroke-width="3"></line></g>
+<circle cx="198" cy="230" r="6" fill="#2A261F" stroke="#CBBFA6"></circle><circle cx="292" cy="230" r="6" fill="#2A261F" stroke="#CBBFA6"></circle>
+<g stroke="#CBBFA6" stroke-width="2.5"><line x1="400" y1="230" x2="436" y2="70"></line><line x1="420" y1="230" x2="456" y2="70"></line><line x1="407" y1="200" x2="427" y2="200"></line><line x1="413" y1="170" x2="433" y2="170"></line><line x1="420" y1="140" x2="440" y2="140"></line><line x1="427" y1="110" x2="447" y2="110"></line><line x1="434" y1="80" x2="454" y2="80"></line></g>
+<rect width="560" height="260" fill="url(#grain)"></rect><rect width="560" height="260" fill="url(#vig)"></rect>
+<text x="546" y="250" text-anchor="end" fill="#CBBFA6" font-family="IBM Plex Mono, monospace" font-size="10">ARCHIVIO · BRAVIISOL · 1980</text>
+</svg>
+</sc-if>
+<sc-if value="{{m.s1}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="1995: piattaforma idraulica LUI MINI in officina" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="grain" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#000000" opacity=".3"></circle><circle cx="3" cy="3" r=".5" fill="#FFFFFF" opacity=".08"></circle></pattern><radialGradient id="vig" cx="50%" cy="50%" r="70%"><stop offset="55%" stop-color="#000000" stop-opacity="0"></stop><stop offset="100%" stop-color="#000000" stop-opacity=".6"></stop></radialGradient><pattern id="peg" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#4C463A"></rect><circle cx="6" cy="6" r="1.4" fill="#2A261F"></circle></pattern></defs>
+<rect width="560" height="260" fill="#3B362D"></rect>
+<rect x="20" y="20" width="250" height="120" fill="url(#peg)" stroke="#CBBFA6" stroke-opacity=".6"></rect>
+<g stroke="#CBBFA6" stroke-width="4" stroke-linecap="round"><line x1="60" y1="40" x2="60" y2="110"></line><line x1="100" y1="44" x2="100" y2="104"></line><line x1="140" y1="40" x2="140" y2="96"></line><line x1="200" y1="50" x2="240" y2="50"></line></g>
+<rect x="132" y="96" width="16" height="10" fill="#CBBFA6"></rect><circle cx="60" cy="36" r="7" fill="none" stroke="#CBBFA6" stroke-width="3"></circle>
+<rect x="20" y="150" width="250" height="12" fill="#2A261F" stroke="#CBBFA6"></rect><line x1="34" y1="162" x2="34" y2="230" stroke="#CBBFA6" stroke-width="3"></line><line x1="256" y1="162" x2="256" y2="230" stroke="#CBBFA6" stroke-width="3"></line>
+<rect x="0" y="230" width="560" height="30" fill="#2A261F"></rect><line x1="0" y1="230" x2="560" y2="230" stroke="#CBBFA6"></line>
+<rect x="330" y="204" width="130" height="20" fill="#2A261F" stroke="#CBBFA6" stroke-width="2"></rect>
+<rect x="388" y="130" width="14" height="74" fill="#CBBFA6" fill-opacity=".75"></rect><rect x="391" y="100" width="8" height="34" fill="#CBBFA6"></rect>
+<rect x="340" y="94" width="110" height="8" fill="#4C463A" stroke="#CBBFA6" stroke-width="2"></rect>
+<g stroke="#CBBFA6" stroke-width="3"><line x1="344" y1="94" x2="344" y2="54"></line><line x1="446" y1="94" x2="446" y2="54"></line><line x1="340" y1="56" x2="450" y2="56"></line><line x1="342" y1="76" x2="448" y2="76"></line></g>
+<circle cx="344" cy="228" r="6" fill="#2A261F" stroke="#CBBFA6"></circle><circle cx="446" cy="228" r="6" fill="#2A261F" stroke="#CBBFA6"></circle>
+<rect width="560" height="260" fill="url(#grain)"></rect><rect width="560" height="260" fill="url(#vig)"></rect>
+<text x="546" y="250" text-anchor="end" fill="#CBBFA6" font-family="IBM Plex Mono, monospace" font-size="10">ARCHIVIO · LUI MINI · 1995</text>
+</svg>
+</sc-if>
+<sc-if value="{{m.s2}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="2010: il primo commissionatore Sprint tra le scaffalature di un magazzino" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="grain" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#000000" opacity=".3"></circle><circle cx="3" cy="3" r=".5" fill="#FFFFFF" opacity=".08"></circle></pattern><radialGradient id="vig" cx="50%" cy="50%" r="70%"><stop offset="55%" stop-color="#000000" stop-opacity="0"></stop><stop offset="100%" stop-color="#000000" stop-opacity=".6"></stop></radialGradient></defs>
+<rect width="560" height="260" fill="#3B362D"></rect>
+<g stroke="#CBBFA6" stroke-width="3"><line x1="20" y1="10" x2="20" y2="230"></line><line x1="150" y1="10" x2="150" y2="230"></line><line x1="410" y1="10" x2="410" y2="230"></line><line x1="540" y1="10" x2="540" y2="230"></line><line x1="20" y1="80" x2="150" y2="80"></line><line x1="20" y1="150" x2="150" y2="150"></line><line x1="410" y1="80" x2="540" y2="80"></line><line x1="410" y1="150" x2="540" y2="150"></line></g>
+<g fill="#4C463A" stroke="#CBBFA6" stroke-width="1.5"><rect x="30" y="40" width="50" height="40"></rect><rect x="86" y="52" width="54" height="28"></rect><rect x="30" y="112" width="70" height="38"></rect><rect x="30" y="186" width="44" height="44"></rect><rect x="80" y="196" width="60" height="34"></rect><rect x="420" y="46" width="60" height="34"></rect><rect x="486" y="36" width="44" height="44"></rect><rect x="420" y="118" width="110" height="32"></rect><rect x="440" y="190" width="70" height="40"></rect></g>
+<rect x="0" y="230" width="560" height="30" fill="#2A261F"></rect><line x1="0" y1="230" x2="560" y2="230" stroke="#CBBFA6"></line>
+<svg x="190" y="88" width="150" height="165" viewBox="0 0 200 220"><rect x="134" y="60" width="12" height="120" fill="#2A261F" stroke="#CBBFA6"></rect><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="#CBBFA6" stroke-width="4"></path><rect x="52" y="124" width="80" height="10" fill="none" stroke="#CBBFA6" stroke-width="2"></rect><line x1="60" y1="134" x2="60" y2="152" stroke="#CBBFA6" stroke-width="2"></line><rect x="56" y="150" width="78" height="8" fill="#2A261F" stroke="#CBBFA6"></rect><rect x="44" y="164" width="118" height="26" rx="6" fill="#4C463A" stroke="#CBBFA6" stroke-width="2"></rect><circle cx="66" cy="196" r="7" fill="#2A261F" stroke="#CBBFA6"></circle><circle cx="140" cy="196" r="7" fill="#2A261F" stroke="#CBBFA6"></circle></svg>
+<rect width="560" height="260" fill="url(#grain)"></rect><rect width="560" height="260" fill="url(#vig)"></rect>
+<text x="546" y="250" text-anchor="end" fill="#CBBFA6" font-family="IBM Plex Mono, monospace" font-size="10">ARCHIVIO · SPRINT · 2010</text>
+</svg>
+</sc-if>
+<sc-if value="{{m.s3}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Il primo capannone a Castelfidardo, con tetto a shed" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="grain" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#000000" opacity=".3"></circle><circle cx="3" cy="3" r=".5" fill="#FFFFFF" opacity=".08"></circle></pattern><radialGradient id="vig" cx="50%" cy="50%" r="70%"><stop offset="55%" stop-color="#000000" stop-opacity="0"></stop><stop offset="100%" stop-color="#000000" stop-opacity=".6"></stop></radialGradient></defs>
+<rect width="560" height="260" fill="#3B362D"></rect>
+<path d="M0 150 Q 120 120 240 140 T 560 130 V 210 H 0 Z" fill="#332F27"></path>
+<path d="M40 212 V120 L100 90 V120 L160 90 V120 L220 90 V120 L280 90 V120 L340 90 V120 L400 90 V120 L460 90 V120 L520 90 V212 Z" fill="#4C463A" stroke="#CBBFA6" stroke-width="2"></path>
+<g fill="#2A261F" stroke="#CBBFA6" stroke-width="1"><rect x="60" y="140" width="40" height="22"></rect><rect x="120" y="140" width="40" height="22"></rect><rect x="180" y="140" width="40" height="22"></rect><rect x="400" y="140" width="40" height="22"></rect><rect x="460" y="140" width="40" height="22"></rect><rect x="250" y="150" width="100" height="62"></rect></g>
+<rect x="0" y="212" width="560" height="48" fill="#2A261F"></rect><line x1="0" y1="212" x2="560" y2="212" stroke="#CBBFA6"></line>
+<rect width="560" height="260" fill="url(#grain)"></rect><rect width="560" height="260" fill="url(#vig)"></rect>
+<text x="546" y="250" text-anchor="end" fill="#CBBFA6" font-family="IBM Plex Mono, monospace" font-size="10">IERI · CASTELFIDARDO</text>
+</svg>
+</sc-if>
+</div>
+<div class="now" style="{{m.nowDelay}}; position: absolute; inset: 0">
+<sc-if value="{{m.s0}}" hint-placeholder-val="{{ true }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Oggi: Leonardo HD sotto un controsoffitto finito, quota inferiore a 5 metri" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<rect width="560" height="260" fill="#202020"></rect>
+<rect width="560" height="46" fill="#2A2A2A"></rect><rect x="120" y="10" width="80" height="26" fill="#EDEDED" opacity=".9"></rect><rect x="360" y="10" width="80" height="26" fill="#EDEDED" opacity=".9"></rect>
+<g stroke="#555555"><line x1="0" y1="46" x2="560" y2="46" stroke="#8A8A89"></line><line x1="40" y1="0" x2="40" y2="46"></line><line x1="120" y1="0" x2="120" y2="46"></line><line x1="200" y1="0" x2="200" y2="46"></line><line x1="280" y1="0" x2="280" y2="46"></line><line x1="360" y1="0" x2="360" y2="46"></line><line x1="440" y1="0" x2="440" y2="46"></line><line x1="520" y1="0" x2="520" y2="46"></line></g>
+<rect x="440" y="46" width="120" height="184" fill="#262626"></rect>
+<rect x="0" y="230" width="560" height="30" fill="#161616"></rect><line x1="0" y1="230" x2="560" y2="230" stroke="#8A8A89"></line>
+<svg x="190" y="92" width="136" height="150" viewBox="0 0 200 220"><rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect><rect x="130" y="70" width="6" height="80" fill="#8A8A89"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="4"></line><line x1="64" y1="130" x2="128" y2="130" stroke="var(--acc)" stroke-width="3"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#111111" stroke="#5A5A59"></rect><circle cx="76" cy="196" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle><circle cx="124" cy="196" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle></svg>
+<line x1="370" y1="48" x2="370" y2="228" stroke="var(--acc)" stroke-dasharray="5 5"></line><text x="378" y="142" fill="#FF6B6B" font-family="IBM Plex Mono, monospace" font-size="11">≤ 5 M</text>
+<text x="546" y="250" text-anchor="end" fill="#BDBDBD" font-family="IBM Plex Mono, monospace" font-size="10">OGGI · LEONARDO HD</text>
+</svg>
+</sc-if>
+<sc-if value="{{m.s1}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Oggi: Leonardo HD 430 con il mast esteso raggiunge le tubazioni in quota" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<rect width="560" height="260" fill="#202020"></rect>
+<rect x="60" y="0" width="16" height="244" fill="#2C2C2C"></rect><rect x="480" y="0" width="16" height="244" fill="#2C2C2C"></rect>
+<line x1="0" y1="34" x2="560" y2="34" stroke="#6E6E6D" stroke-width="8"></line><line x1="0" y1="52" x2="560" y2="52" stroke="#555555" stroke-width="6"></line><circle cx="250" cy="34" r="9" fill="#202020" stroke="var(--acc)" stroke-width="3"></circle>
+<rect x="0" y="244" width="560" height="16" fill="#161616"></rect><line x1="0" y1="244" x2="560" y2="244" stroke="#8A8A89"></line>
+<svg x="190" y="50" width="100" height="200" viewBox="0 0 200 400"><rect x="128" y="230" width="12" height="124" fill="#5A5A59"></rect><rect x="130" y="140" width="8" height="110" fill="#6E6E6D"></rect><rect x="131.5" y="60" width="5" height="100" fill="#8A8A89"></rect><rect x="62" y="140" width="68" height="10" fill="var(--acc)"></rect><rect x="60" y="150" width="72" height="6" fill="#111111"></rect><line x1="66" y1="150" x2="66" y2="96" stroke="var(--acc)" stroke-width="4"></line><line x1="126" y1="150" x2="126" y2="96" stroke="var(--acc)" stroke-width="4"></line><line x1="62" y1="97" x2="130" y2="97" stroke="var(--acc)" stroke-width="4"></line><line x1="64" y1="124" x2="128" y2="124" stroke="var(--acc)" stroke-width="3"></line><rect x="62" y="346" width="76" height="26" rx="4" fill="#111111" stroke="#5A5A59"></rect><circle cx="76" cy="378" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle><circle cx="124" cy="378" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle></svg>
+<line x1="320" y1="126" x2="320" y2="242" stroke="var(--acc)" stroke-dasharray="5 5"></line><text x="328" y="190" fill="#FF6B6B" font-family="IBM Plex Mono, monospace" font-size="11">4.300 MM</text>
+<text x="546" y="236" text-anchor="end" fill="#BDBDBD" font-family="IBM Plex Mono, monospace" font-size="10">OGGI · LEONARDO HD 430</text>
+</svg>
+</sc-if>
+<sc-if value="{{m.s2}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Oggi: Sprint in corsia tra le scaffalature di un magazzino moderno" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="perfN" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#111111"></rect><circle cx="3" cy="3" r="1.6" fill="#BDBDBD"></circle></pattern></defs>
+<rect width="560" height="260" fill="#202020"></rect>
+<g stroke="#8A8A89" stroke-width="3"><line x1="20" y1="10" x2="20" y2="230"></line><line x1="150" y1="10" x2="150" y2="230"></line><line x1="410" y1="10" x2="410" y2="230"></line><line x1="540" y1="10" x2="540" y2="230"></line></g>
+<g stroke="var(--acc)" stroke-width="4"><line x1="20" y1="80" x2="150" y2="80"></line><line x1="20" y1="150" x2="150" y2="150"></line><line x1="410" y1="80" x2="540" y2="80"></line><line x1="410" y1="150" x2="540" y2="150"></line></g>
+<g fill="#3A3A39"><rect x="30" y="40" width="50" height="38"></rect><rect x="86" y="52" width="54" height="26"></rect><rect x="30" y="112" width="70" height="36"></rect><rect x="30" y="186" width="44" height="44"></rect><rect x="80" y="196" width="60" height="34"></rect><rect x="420" y="46" width="60" height="32"></rect><rect x="486" y="36" width="44" height="42"></rect><rect x="420" y="118" width="110" height="30"></rect><rect x="440" y="190" width="70" height="40"></rect></g>
+<g fill="#EDEDED"><rect x="38" y="48" width="14" height="5"></rect><rect x="94" y="58" width="14" height="5"></rect><rect x="38" y="120" width="14" height="5"></rect><rect x="428" y="54" width="14" height="5"></rect><rect x="428" y="124" width="14" height="5"></rect><rect x="448" y="198" width="14" height="5"></rect></g>
+<rect x="0" y="230" width="560" height="30" fill="#161616"></rect><line x1="0" y1="230" x2="560" y2="230" stroke="#8A8A89"></line><line x1="170" y1="246" x2="390" y2="246" stroke="var(--acc)" stroke-width="2" stroke-dasharray="10 8"></line>
+<svg x="190" y="86" width="150" height="165" viewBox="0 0 200 220"><rect x="134" y="60" width="12" height="120" fill="#111111"></rect><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"></path><rect x="52" y="124" width="80" height="12" fill="url(#perfN)"></rect><line x1="60" y1="136" x2="60" y2="152" stroke="#8A8A89" stroke-width="3"></line><rect x="56" y="150" width="78" height="8" fill="url(#perfN)"></rect><rect x="44" y="164" width="118" height="26" rx="10" fill="#EDEDED" stroke="#111111" stroke-width="2"></rect><rect x="56" y="172" width="34" height="4" fill="var(--acc)"></rect><circle cx="66" cy="196" r="7" fill="#111111"></circle><circle cx="140" cy="196" r="7" fill="#111111"></circle></svg>
+<text x="546" y="222" text-anchor="end" fill="#BDBDBD" font-family="IBM Plex Mono, monospace" font-size="10">OGGI · SPRINT</text>
+</svg>
+</sc-if>
+<sc-if value="{{m.s3}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 560 260" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Oggi: lo stabilimento Bravi di Castelfidardo con le piattaforme schierate davanti" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<rect width="560" height="260" fill="#202020"></rect>
+<rect x="30" y="80" width="500" height="132" fill="#2A2A2A" stroke="#555555"></rect>
+<rect x="30" y="98" width="500" height="30" fill="#3A3A39"></rect>
+<g stroke="#555555"><line x1="70" y1="98" x2="70" y2="128"></line><line x1="110" y1="98" x2="110" y2="128"></line><line x1="150" y1="98" x2="150" y2="128"></line><line x1="190" y1="98" x2="190" y2="128"></line><line x1="230" y1="98" x2="230" y2="128"></line><line x1="270" y1="98" x2="270" y2="128"></line><line x1="310" y1="98" x2="310" y2="128"></line><line x1="350" y1="98" x2="350" y2="128"></line><line x1="390" y1="98" x2="390" y2="128"></line><line x1="430" y1="98" x2="430" y2="128"></line><line x1="470" y1="98" x2="470" y2="128"></line><line x1="510" y1="98" x2="510" y2="128"></line></g>
+<rect x="56" y="144" width="150" height="36" fill="var(--acc)"></rect><text x="131" y="170" text-anchor="middle" fill="#FFFFFF" font-family="Manrope, sans-serif" font-size="22" font-weight="800">BRΛVI</text>
+<rect x="0" y="212" width="560" height="48" fill="#161616"></rect><line x1="0" y1="212" x2="560" y2="212" stroke="#8A8A89"></line>
+<svg x="280" y="150" width="60" height="66" viewBox="0 0 200 220"><rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="6"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="6"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="6"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#111111"></rect></svg>
+<svg x="345" y="150" width="60" height="66" viewBox="0 0 200 220"><rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="6"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="6"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="6"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#111111"></rect></svg>
+<svg x="410" y="150" width="60" height="66" viewBox="0 0 200 220"><rect x="134" y="60" width="12" height="120" fill="#111111"></rect><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="7"></path><rect x="56" y="150" width="78" height="8" fill="#111111"></rect><rect x="44" y="164" width="118" height="26" rx="10" fill="#EDEDED"></rect></svg>
+<text x="546" y="250" text-anchor="end" fill="#BDBDBD" font-family="IBM Plex Mono, monospace" font-size="10">OGGI · 7.000 M² · 48 PAESI</text>
+</svg>
+</sc-if>
+</div>
+<span class="mono" aria-hidden="true" style="position: absolute; left: 12px; top: 30px; z-index: 2; font-size: 10px; color: #FFFFFF; background: rgba(0,0,0,.55); padding: 3px 7px">IERI ↔ OGGI</span>
+</div>
+<h3 style="margin: 22px 0 8px; font-size: 24px; font-weight: 800; letter-spacing: -.02em">{{m.t}}</h3>
+<p style="margin: 0; font-size: 17px; color: #CFCFCF">{{m.d}}</p>
+</article>
+</sc-for>
+</div>
+<div style="position: relative; height: 2px; background: #333333; margin-top: 32px"><div class="hprog" style="position: absolute; inset: 0; background: var(--acc)"></div></div>
+</div>
+</section>
+
+<!-- 07 CASE STUDIES -->
+<section id="applicazioni" class="peak" style="background: #FFFFFF; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +5.350 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 128px 56px 0">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 40px">
+<div>
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #C4000F">06 · APPLICAZIONI</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em">Performance in every environment.</h2>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-size: 48px; font-weight: 800; letter-spacing: -.04em; font-variant-numeric: tabular-nums">{{csNum}}<span style="font-size: 18px; color: #5E5E5D"> / 04</span></span>
+<button type="button" onClick="{{csPrev}}" aria-label="Caso precedente" style="width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid #151515; background: transparent; color: #151515; font-size: 20px; cursor: pointer; margin-left: 16px">←</button>
+<button type="button" onClick="{{csToggle}}" aria-label="{{csPlayLabel}}" style="width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid #151515; background: transparent; color: #151515; font-size: 13px; cursor: pointer">{{csPlayIcon}}</button>
+<button type="button" onClick="{{csNext}}" aria-label="Caso successivo" style="width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--acc); color: #FFFFFF; font-size: 20px; cursor: pointer">→</button>
+</div>
+</div>
+</div>
+<div style="position: relative; height: 720px; overflow: hidden; background: #151515">
+<sc-for list="{{cases}}" as="c" hint-placeholder-count="4">
+<div class="{{c.cls}}" aria-hidden="{{c.hidden}}">
+<div class="cimg" style="position: absolute; inset: 0; background-color: {{c.bg}}">
+<sc-if value="{{c.s0}}" hint-placeholder-val="{{ true }}">
+<svg viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Residential 170 al lavoro in un interno residenziale in ristrutturazione" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<rect width="1600" height="720" fill="#2E2E2D"></rect><rect width="1600" height="600" fill="#343433"></rect>
+<line x1="0" y1="64" x2="1600" y2="64" stroke="#5A5A59" stroke-width="3"></line>
+<rect x="1240" y="150" width="260" height="280" fill="#4A4A49" stroke="#8A8A89" stroke-width="5"></rect><line x1="1370" y1="150" x2="1370" y2="430" stroke="#8A8A89" stroke-width="4"></line><line x1="1240" y1="290" x2="1500" y2="290" stroke="#8A8A89" stroke-width="4"></line>
+<line x1="980" y1="64" x2="980" y2="120" stroke="#8A8A89" stroke-width="2"></line><rect x="950" y="120" width="60" height="16" fill="#EDEDED"></rect>
+<g stroke="#4A4A49" stroke-width="2"><line x1="720" y1="64" x2="720" y2="600"></line><line x1="1180" y1="64" x2="1180" y2="600"></line></g>
+<rect x="0" y="600" width="1600" height="120" fill="#222222"></rect><polygon points="760,610 1460,610 1520,700 700,700" fill="#3A3A39"></polygon>
+<svg x="860" y="270" width="320" height="352" viewBox="0 0 200 220"><rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect><rect x="130" y="70" width="6" height="80" fill="#8A8A89"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="3.5"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="4"></line><line x1="64" y1="130" x2="128" y2="130" stroke="var(--acc)" stroke-width="3"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#111111" stroke="#5A5A59"></rect><circle cx="76" cy="196" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle><circle cx="124" cy="196" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle></svg>
+</svg>
+</sc-if>
+<sc-if value="{{c.s1}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Leonardo HD 430 con il mast esteso per la manutenzione delle tubazioni in uno stabilimento" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<rect width="1600" height="720" fill="#2A2A29"></rect>
+<rect x="720" y="0" width="44" height="640" fill="#333332"></rect><rect x="1480" y="0" width="44" height="640" fill="#333332"></rect>
+<line x1="0" y1="96" x2="1600" y2="96" stroke="#6E6E6D" stroke-width="22"></line><line x1="0" y1="140" x2="1600" y2="140" stroke="#555555" stroke-width="14"></line>
+<circle cx="1120" cy="96" r="24" fill="#2A2A29" stroke="var(--acc)" stroke-width="6"></circle><rect x="0" y="190" width="1600" height="18" fill="#3A3A39"></rect>
+<rect x="0" y="640" width="1600" height="80" fill="#1E1E1E"></rect><line x1="0" y1="640" x2="1600" y2="640" stroke="#8A8A89" stroke-width="2"></line>
+<svg x="960" y="60" width="300" height="600" viewBox="0 0 200 400"><rect x="128" y="230" width="12" height="124" fill="#5A5A59"></rect><rect x="130" y="140" width="8" height="110" fill="#6E6E6D"></rect><rect x="131.5" y="60" width="5" height="100" fill="#8A8A89"></rect><rect x="62" y="140" width="68" height="10" fill="var(--acc)"></rect><rect x="60" y="150" width="72" height="6" fill="#111111"></rect><line x1="66" y1="150" x2="66" y2="96" stroke="var(--acc)" stroke-width="4"></line><line x1="126" y1="150" x2="126" y2="96" stroke="var(--acc)" stroke-width="4"></line><line x1="62" y1="97" x2="130" y2="97" stroke="var(--acc)" stroke-width="4"></line><line x1="64" y1="124" x2="128" y2="124" stroke="var(--acc)" stroke-width="3"></line><rect x="62" y="346" width="76" height="26" rx="4" fill="#111111" stroke="#5A5A59"></rect><circle cx="76" cy="378" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle><circle cx="124" cy="378" r="7" fill="#000000" stroke="#8A8A89" stroke-width="2"></circle></svg>
+</svg>
+</sc-if>
+<sc-if value="{{c.s2}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Sprint nella corsia di un magazzino tra scaffalature piene di colli" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="boxes" width="120" height="150" patternUnits="userSpaceOnUse"><rect width="120" height="150" fill="#303030"></rect><rect x="8" y="70" width="52" height="72" fill="#4A4A49"></rect><rect x="64" y="96" width="48" height="46" fill="#3E3E3D"></rect><rect x="16" y="80" width="18" height="6" fill="#EDEDED"></rect><line x1="0" y1="146" x2="120" y2="146" stroke="var(--acc)" stroke-width="6"></line></pattern><pattern id="perfC" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#111111"></rect><circle cx="3" cy="3" r="1.6" fill="#BDBDBD"></circle></pattern></defs>
+<rect width="1600" height="720" fill="#303030"></rect>
+<rect x="700" y="40" width="300" height="600" fill="url(#boxes)"></rect><rect x="1300" y="40" width="300" height="600" fill="url(#boxes)"></rect>
+<g fill="#8A8A89"><rect x="700" y="40" width="8" height="600"></rect><rect x="992" y="40" width="8" height="600"></rect><rect x="1300" y="40" width="8" height="600"></rect><rect x="1592" y="40" width="8" height="600"></rect></g>
+<rect x="0" y="640" width="1600" height="80" fill="#1E1E1E"></rect><line x1="1020" y1="680" x2="1280" y2="680" stroke="var(--acc)" stroke-width="4" stroke-dasharray="24 18"></line>
+<svg x="1010" y="340" width="280" height="308" viewBox="0 0 200 220"><rect x="134" y="60" width="12" height="120" fill="#111111"></rect><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"></path><rect x="52" y="124" width="80" height="12" fill="url(#perfC)"></rect><line x1="60" y1="136" x2="60" y2="152" stroke="#8A8A89" stroke-width="3"></line><rect x="56" y="150" width="78" height="8" fill="url(#perfC)"></rect><rect x="44" y="164" width="118" height="26" rx="10" fill="#EDEDED" stroke="#111111" stroke-width="2"></rect><rect x="56" y="172" width="34" height="4" fill="var(--acc)"></rect><circle cx="66" cy="196" r="7" fill="#111111"></circle><circle cx="140" cy="196" r="7" fill="#111111"></circle></svg>
+</svg>
+</sc-if>
+<sc-if value="{{c.s3}}" hint-placeholder-val="{{ false }}">
+<svg viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Spin-Go per il riassortimento degli scaffali in un punto vendita" style="position: absolute; inset: 0; width: 100%; height: 100%">
+<defs><pattern id="prods" width="60" height="110" patternUnits="userSpaceOnUse"><rect width="60" height="110" fill="#2C2C2B"></rect><rect x="6" y="50" width="20" height="52" fill="#5A5A59"></rect><rect x="30" y="64" width="22" height="38" fill="#EDEDED" opacity=".75"></rect><rect x="0" y="102" width="60" height="8" fill="#8A8A89"></rect><rect x="4" y="103" width="16" height="6" fill="var(--acc)"></rect></pattern></defs>
+<rect width="1600" height="720" fill="#2C2C2B"></rect>
+<rect x="640" y="60" width="960" height="580" fill="url(#prods)"></rect>
+<rect x="640" y="20" width="960" height="40" fill="#1E1E1E"></rect><text x="700" y="47" fill="#EDEDED" font-family="IBM Plex Mono, monospace" font-size="18">CORSIA 07</text>
+<rect x="0" y="640" width="1600" height="80" fill="#1E1E1E"></rect><line x1="0" y1="640" x2="1600" y2="640" stroke="#8A8A89" stroke-width="2"></line>
+<svg x="980" y="340" width="280" height="308" viewBox="0 0 200 220"><rect x="134" y="60" width="12" height="120" fill="#111111"></rect><path d="M140 72 C 120 72, 96 82, 82 104" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"></path><rect x="52" y="124" width="80" height="12" fill="#111111"></rect><line x1="60" y1="136" x2="60" y2="152" stroke="#8A8A89" stroke-width="3"></line><rect x="56" y="150" width="78" height="8" fill="#111111"></rect><rect x="44" y="164" width="118" height="26" rx="10" fill="#EDEDED" stroke="#111111" stroke-width="2"></rect><circle cx="66" cy="196" r="7" fill="#111111"></circle><circle cx="140" cy="196" r="7" fill="#111111"></circle></svg>
+</svg>
+</sc-if>
+</div>
+<span class="mono" style="position: absolute; right: 56px; top: 64px; font-size: 11px; color: #FFFFFF; background: rgba(0,0,0,.5); padding: 4px 8px">ILLUSTRAZIONE · DA SOSTITUIRE CON FOTO REALE</span>
+<div aria-hidden="true" style="position: absolute; right: 40px; bottom: -70px; font-size: 380px; font-weight: 800; letter-spacing: -.06em; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,.25)">{{c.n}}</div>
+<div class="ctxt cut" style="position: absolute; left: 56px; bottom: 80px; width: min(620px, 80%); background: #FFFFFF; color: #2B2B2A; padding: 48px 36px 36px">
+<span class="mono" style="font-size: 12px; color: #C4000F">{{c.sector}}</span>
+<h3 style="margin: 12px 0 22px; font-size: clamp(28px, 2.8vw, 44px); line-height: 1.05; font-weight: 800; letter-spacing: -.035em">{{c.title}}</h3>
+<div class="mono" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; font-size: 11px; color: #5E5E5D; border-top: 1px solid #E2E2E2; padding-top: 14px">
+<div>SOLUZIONE BRAVI<div style="font-size: 16px; font-weight: 500; color: #2B2B2A; margin-top: 2px">{{c.sol}}</div></div>
+<div>RISULTATO<div style="font-size: 16px; font-weight: 500; color: #2B2B2A; margin-top: 2px">{{c.res}}</div></div>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<!-- SERVIZI -->
+<section id="servizi" class="peak" style="background: #FFFFFF; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +5.800 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 136px 56px 120px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 48px">
+<div>
+<p class="mono" style="margin: 0 0 18px; font-size: 13px; color: #C4000F">SERVIZI</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(44px, 5vw, 84px); line-height: .98; font-weight: 800; letter-spacing: -.045em; max-width: 960px">Accanto a te, per tutta la vita della macchina.</h2>
+</div>
+<a class="btn btn-red" href="#contatti" style="padding: 16px 22px">Contatta l’assistenza <span class="arr">→</span></a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px">
+<a class="svc2" href="#servizi" style="display: flex; flex-direction: column; gap: 18px; min-height: 380px; padding: 36px; border: 1.5px solid #E2E2E2; text-decoration: none; color: inherit">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg class="svc-ic" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="var(--acc)" stroke-width="3"><rect x="6" y="10" width="52" height="34" rx="3"></rect><line x1="22" y1="54" x2="42" y2="54"></line><line x1="32" y1="44" x2="32" y2="54"></line><polygon points="27,19 27,35 41,27" fill="var(--acc)" stroke="none"></polygon></svg><span class="mono" style="font-size: 12px">01</span></div>
+<h3 style="margin: auto 0 0; font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05">Digital Technical Training</h3>
+<p class="svc-p" style="margin: 0; font-size: 17px; color: #4A4A49">Formazione tecnica digitale su uso, manutenzione e assistenza delle macchine Bravi, per rivenditori e officine.</p>
+<span class="svc-link" style="font-weight: 700">Scopri il training <span class="arr">→</span></span>
+</a>
+<a class="svc2" href="#servizi" style="display: flex; flex-direction: column; gap: 18px; min-height: 380px; padding: 36px; border: 1.5px solid #E2E2E2; text-decoration: none; color: inherit">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg class="svc-ic" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="var(--acc)" stroke-width="3"><polygon points="32,6 56,18 56,46 32,58 8,46 8,18"></polygon><polyline points="8,18 32,30 56,18"></polyline><line x1="32" y1="30" x2="32" y2="58"></line></svg><span class="mono" style="font-size: 12px">02</span></div>
+<h3 style="margin: auto 0 0; font-size: 32px; letter-spacing: -.02em; line-height: 1.05"><span style="font-weight: 800">BRΛVI</span><span style="font-weight: 300"> PARTS</span></h3>
+<p class="svc-p" style="margin: 0; font-size: 17px; color: #4A4A49">Trova e seleziona i ricambi originali per la tua piattaforma Bravi: consegna in 48 ore.</p>
+<span class="svc-link" style="font-weight: 700">Seleziona la piattaforma <span class="arr">→</span></span>
+</a>
+<a class="svc2" href="#servizi" style="display: flex; flex-direction: column; gap: 18px; min-height: 380px; padding: 36px; border: 1.5px solid #E2E2E2; text-decoration: none; color: inherit">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><svg class="svc-ic" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" fill="none" stroke="var(--acc)" stroke-width="3"><path d="M32 58 C 32 58 12 38 12 24 a20 20 0 0 1 40 0 C 52 38 32 58 32 58 Z"></path><circle cx="32" cy="24" r="7"></circle></svg><span class="mono" style="font-size: 12px">03</span></div>
+<h3 style="margin: auto 0 0; font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05">Dove trovarci</h3>
+<p class="svc-p" style="margin: 0; font-size: 17px; color: #4A4A49">Rivenditori e noleggiatori in 48 paesi, tra Europa, Americhe, Asia-Pacifico e Africa.</p>
+<span class="svc-link" style="font-weight: 700">Trova il più vicino <span class="arr">→</span></span>
+</a>
+</div>
+</div>
+</section>
+
+<!-- NEWS -->
+<section id="news" class="peak" style="background: #F0F0F0; color: #2B2B2A">
+<div class="lvl">▲ QUOTA +6.300 MM</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 136px 56px 120px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 48px">
+<h2 data-rv="" style="margin: 0; font-size: clamp(36px, 3.4vw, 56px); font-weight: 600; letter-spacing: -.03em">Approfondimenti e novità di settore</h2>
+<div role="group" aria-label="Filtra per categoria" style="display: flex; flex-wrap: wrap; gap: 4px 28px">
+<sc-for list="{{nfBtns}}" as="f" hint-placeholder-count="4"><button type="button" class="{{f.cls}}" onClick="{{f.pick}}" aria-pressed="{{f.on}}">{{f.label}}</button></sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 36px">
+<a class="{{newsCls}}" href="#news">
+<div style="position: relative; height: 340px; overflow: hidden"><div class="nimg" style="position: absolute; inset: 0; background: #0E0E0E">
+<svg viewBox="0 0 200 220" aria-hidden="true" style="position: absolute; right: 12%; bottom: 0; width: 230px"><rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect><rect x="130" y="70" width="6" height="80" fill="#8A8A89"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="#A3201A" stroke-width="4"></line><line x1="126" y1="158" x2="126" y2="102" stroke="#A3201A" stroke-width="4"></line><line x1="62" y1="103" x2="130" y2="103" stroke="#A3201A" stroke-width="4"></line><line x1="64" y1="130" x2="128" y2="130" stroke="#A3201A" stroke-width="3"></line><rect x="62" y="148" width="68" height="10" fill="#A3201A"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#1A1A1A" stroke="#444444"></rect><circle cx="76" cy="196" r="7" fill="#000000" stroke="#666666" stroke-width="2"></circle><circle cx="124" cy="196" r="7" fill="#000000" stroke="#666666" stroke-width="2"></circle></svg>
+</div><span style="position: absolute; top: 14px; right: 14px; background: #2B2B2A; color: #FFFFFF; padding: 8px 16px; font-size: 17px; font-weight: 600">Press</span></div>
+<span class="mono" style="margin-top: 28px; font-size: 14px; color: #5E5E5D">20 OTTOBRE 2026</span>
+<h3 style="margin: 14px 0 16px; font-size: 30px; font-weight: 500; line-height: 1.2; letter-spacing: -.015em">Leonardo HD | costi dei ricambi e affidabilità</h3>
+<span style="color: #C4000F; font-size: 19px; font-weight: 600">Leggi <span class="arr">→</span></span>
+</a>
+<a class="{{newsCls}}" href="#news" style="animation-delay: .1s">
+<div style="position: relative; height: 340px; overflow: hidden"><div class="nimg" style="position: absolute; inset: 0; background: #FFFFFF; display: flex; align-items: center; padding: 28px; gap: 16px">
+<div style="flex: 1 1 50%"><div style="font-size: 18px; font-weight: 800; line-height: 1.25; color: #2B2B2A">Trova e seleziona i ricambi originali per le tue <span style="color: #C4000F">piattaforme Bravi</span></div><div class="mono" style="display: inline-block; margin-top: 14px; background: var(--acc); color: #FFFFFF; font-size: 10px; padding: 5px 9px">SELEZIONA LA PIATTAFORMA ›</div></div>
+<svg viewBox="0 0 200 220" aria-hidden="true" style="flex: 0 0 46%; width: 46%"><rect x="128" y="110" width="10" height="62" fill="#5A5A59"></rect><rect x="130" y="70" width="6" height="80" fill="#8A8A89"></rect><line x1="66" y1="158" x2="66" y2="102" stroke="var(--acc)" stroke-width="4"></line><line x1="126" y1="158" x2="126" y2="102" stroke="var(--acc)" stroke-width="4"></line><line x1="62" y1="103" x2="130" y2="103" stroke="var(--acc)" stroke-width="4"></line><rect x="62" y="148" width="68" height="10" fill="var(--acc)"></rect><rect x="62" y="166" width="76" height="26" rx="4" fill="#2B2B2A"></rect><circle cx="76" cy="196" r="7" fill="#151515"></circle><circle cx="124" cy="196" r="7" fill="#151515"></circle></svg>
+</div><span style="position: absolute; top: 14px; right: 14px; background: #2B2B2A; color: #FFFFFF; padding: 8px 16px; font-size: 17px; font-weight: 600">Press</span></div>
+<span class="mono" style="margin-top: 28px; font-size: 14px; color: #5E5E5D">21 SETTEMBRE 2026</span>
+<h3 style="margin: 14px 0 16px; font-size: 30px; font-weight: 500; line-height: 1.2; letter-spacing: -.015em">Bravi Parts si rinnova</h3>
+<span style="color: #C4000F; font-size: 19px; font-weight: 600">Leggi <span class="arr">→</span></span>
+</a>
+<a class="{{newsCls}}" href="#news" style="animation-delay: .2s">
+<div style="position: relative; height: 340px; overflow: hidden"><div class="nimg" style="position: absolute; inset: 0; display: flex">
+<div style="flex: 0 0 54%; background: var(--acc); color: #FFFFFF; padding: 32px 26px; display: flex; flex-direction: column; justify-content: center"><div style="font-size: 76px; font-weight: 800; letter-spacing: -.05em; line-height: 1">TCO</div><div style="margin-top: 12px; font-size: 15px; font-weight: 700; line-height: 1.3">Perché affidabilità, manutenzione, utilizzo e valore residuo possono cambiare il conto finale</div></div>
+<div style="flex: 1 1 auto; background-color: #2B2B2A; background-image: linear-gradient(#383838 1px, transparent 1px), linear-gradient(90deg, #383838 1px, transparent 1px); background-size: 24px 24px"></div>
+</div><span style="position: absolute; top: 14px; right: 14px; background: #2B2B2A; color: #FFFFFF; padding: 8px 16px; font-size: 17px; font-weight: 600">Press</span></div>
+<span class="mono" style="margin-top: 28px; font-size: 14px; color: #5E5E5D">03 SETTEMBRE 2026</span>
+<h3 style="margin: 14px 0 16px; font-size: 30px; font-weight: 500; line-height: 1.2; letter-spacing: -.015em">TCO: guardare oltre il prezzo</h3>
+<span style="color: #C4000F; font-size: 19px; font-weight: 600">Leggi <span class="arr">→</span></span>
+</a>
+</div>
+<sc-if value="{{newsEmpty}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 20px; color: #5E5E5D">Nessun contenuto in questa categoria. <button type="button" onClick="{{resetNews}}" style="background: none; border: 0; padding: 0; min-height: 44px; font: inherit; color: #C4000F; text-decoration: underline; cursor: pointer">Mostra tutti</button></p>
+</sc-if>
+</div>
+</section>
+
+<!-- 08 CONTATTO -->
+<section id="contatti" class="peak" style="background: var(--acc); color: #FFFFFF; overflow: hidden">
+<div class="lvl">▲ QUOTA +6.620 MM · VETTA</div>
+<div class="skw" aria-hidden="true" style="padding: 72px 0 24px; overflow: hidden">
+<div class="mq" style="font-size: clamp(80px, 10vw, 180px); font-weight: 800; letter-spacing: -.055em; line-height: 1">
+<sc-for list="{{mq}}" as="t" hint-placeholder-count="4"><span style="padding-right: 64px; white-space: nowrap">{{t}}</span></sc-for>
+</div>
+</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 40px 56px 110px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 40px">
+<div>
+<p class="mono" style="margin: 0 0 16px; font-size: 13px">07 · CONTATTO</p>
+<h2 data-rv="" style="margin: 0; font-size: clamp(32px, 3vw, 48px); font-weight: 800; letter-spacing: -.035em; line-height: 1.05; max-width: 640px">Let’s move forward together.</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px">
+<a class="btn btn-w" href="#contatti" style="padding: 19px 26px; font-size: 18px">Richiedi una demo <span class="arr">→</span></a>
+<a class="btn btn-lw" href="#contatti" style="padding: 17.5px 26px; font-size: 18px">Trova un rivenditore</a>
+</div>
+</div>
+<div class="mono" style="font-size: 14px; line-height: 1.9; text-align: right">
+<div><a href="tel:+390717819090" style="color: #FFFFFF">+39 071 7819090</a></div>
+<div><a href="mailto:info@bravi-platforms.com" style="color: #FFFFFF">info@bravi-platforms.com</a></div>
+<div>US TOLL FREE 855-704-7342</div>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background: #151515; color: #CFCFCF">
+<div style="max-width: 1680px; margin: 0 auto; padding: 72px 56px 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 40px">
+<div style="display: flex; flex-direction: column; line-height: 1; color: #FFFFFF">
+<span style="font-size: 44px; font-weight: 800; letter-spacing: -.03em">BRΛVI</span>
+<span style="display: flex; align-items: center; gap: 6px; margin-top: 2px"><span style="width: 64px; height: 4px; background: var(--acc)"></span><span style="font-size: 13px; font-weight: 800; letter-spacing: .1em">PLATFORMS</span></span>
+</div>
+<div style="font-size: 16px; display: flex; flex-direction: column; gap: 6px">
+<span class="mono" style="font-size: 11px; color: #9A9A99; margin-bottom: 6px">SEDE</span>
+<span>Strada Statale Adriatica Km 314,600</span><span>60022 Castelfidardo (AN), Italia</span>
+</div>
+<div style="font-size: 16px; display: flex; flex-direction: column; gap: 6px">
+<span class="mono" style="font-size: 11px; color: #9A9A99; margin-bottom: 6px">AZIENDA</span>
+<a href="#storia" style="color: #FFFFFF">About Us</a><a href="#top" style="color: #FFFFFF">Certificazioni</a><a href="#top" style="color: #FFFFFF">Industria 4.0</a><a href="#top" style="color: #FFFFFF">Lavora con noi</a>
+</div>
+<div style="font-size: 16px; display: flex; flex-direction: column; gap: 6px">
+<span class="mono" style="font-size: 11px; color: #9A9A99; margin-bottom: 6px">SERVIZI</span>
+<a href="#top" style="color: #FFFFFF">Digital Technical Training</a><a href="#top" style="color: #FFFFFF">Bravi Parts — ricambi in 48 ore</a><a href="#top" style="color: #FFFFFF">Dove trovarci</a>
+</div>
+</div>
+<div style="max-width: 1680px; margin: 0 auto; padding: 20px 56px 32px; border-top: 1px solid #333333; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 14px; color: #9A9A99">
+<span>BRAVI-PLATFORMS S.R.L. · P.IVA 01234570420</span>
+<span>ISO 9001:2015 · CE · UL/CSA · ANSI-SAIA A92.20</span>
+<span>Privacy · Cookie · Codice etico · Whistleblowing</span>
+</div>
+</footer>
+</div>
+</template>
+<script>/* Preact 10.24.3 — MIT License, (c) 2015-present Jason Miller */
+!function(n){"function"==typeof define&&define.amd?define(n):n()}(function(){var n,l,t,u,i,o,e,r,f,c,s,a,h,p=65536,v=1<<17,d={},y=[],w=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,_=Array.isArray;function g(n,l){for(var t in l)n[t]=l[t];return n}function m(n){n&&n.parentNode&&n.parentNode.removeChild(n)}function b(l,t,u){var i,o,e,r={};for(e in t)"key"==e?i=t[e]:"ref"==e?o=t[e]:r[e]=t[e];if(arguments.length>2&&(r.children=arguments.length>3?n.call(arguments,2):u),"function"==typeof l&&null!=l.defaultProps)for(e in l.defaultProps)void 0===r[e]&&(r[e]=l.defaultProps[e]);return k(l,r,i,o,null)}function k(n,u,i,o,e){var r={type:n,props:u,key:i,ref:o,__k:null,__:null,__b:0,__e:null,__d:void 0,__c:null,constructor:void 0,__v:null==e?++t:e,__i:-1,__u:0};return null==e&&null!=l.vnode&&l.vnode(r),r}function C(n){return n.children}function x(n,l){this.props=n,this.context=l}function S(n,l){if(null==l)return n.__?S(n.__,n.__i+1):null;for(var t;l<n.__k.length;l++)if(null!=(t=n.__k[l])&&null!=t.__e)return t.__e;return"function"==typeof n.type?S(n):null}function M(n){var l,t;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++)if(null!=(t=n.__k[l])&&null!=t.__e){n.__e=n.__c.base=t.__e;break}return M(n)}}function P(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!$.__r++||o!==l.debounceRendering)&&((o=l.debounceRendering)||e)($)}function $(){var n,t,u,o,e,f,c,s;for(i.sort(r);n=i.shift();)n.__d&&(t=i.length,o=void 0,f=(e=(u=n).__v).__e,c=[],s=[],u.__P&&((o=g({},e)).__v=e.__v+1,l.vnode&&l.vnode(o),O(u.__P,o,e,u.__n,u.__P.namespaceURI,32&e.__u?[f]:null,c,null==f?S(e):f,!!(32&e.__u),s),o.__v=e.__v,o.__.__k[o.__i]=o,V(c,o,s),o.__e!=f&&M(o)),i.length>t&&i.sort(r));$.__r=0}function I(n,l,t,u,i,o,e,r,f,c,s){var a,h,v,w,_,g=u&&u.__k||y,m=l.length;for(t.__d=f,A(t,l,g),f=t.__d,a=0;a<m;a++)null!=(v=t.__k[a])&&(h=-1===v.__i?d:g[v.__i]||d,v.__i=a,O(n,v,h,i,o,e,r,f,c,s),w=v.__e,v.ref&&h.ref!=v.ref&&(h.ref&&z(h.ref,null,v),s.push(v.ref,v.__c||w,v)),null==_&&null!=w&&(_=w),v.__u&p||h.__k===v.__k?f=E(v,f,n):"function"==typeof v.type&&void 0!==v.__d?f=v.__d:w&&(f=w.nextSibling),v.__d=void 0,v.__u&=-196609);t.__d=f,t.__e=_}function A(n,l,t){var u,i,o,e,r,f=l.length,c=t.length,s=c,a=0;for(n.__k=[],u=0;u<f;u++)null!=(i=l[u])&&"boolean"!=typeof i&&"function"!=typeof i?(e=u+a,(i=n.__k[u]="string"==typeof i||"number"==typeof i||"bigint"==typeof i||i.constructor==String?k(null,i,null,null,null):_(i)?k(C,{children:i},null,null,null):void 0===i.constructor&&i.__b>0?k(i.type,i.props,i.key,i.ref?i.ref:null,i.__v):i).__=n,i.__b=n.__b+1,o=null,-1!==(r=i.__i=F(i,t,e,s))&&(s--,(o=t[r])&&(o.__u|=v)),null==o||null===o.__v?(-1==r&&a--,"function"!=typeof i.type&&(i.__u|=p)):r!==e&&(r==e-1?a--:r==e+1?a++:(r>e?a--:a++,i.__u|=p))):i=n.__k[u]=null;if(s)for(u=0;u<c;u++)null!=(o=t[u])&&0==(o.__u&v)&&(o.__e==n.__d&&(n.__d=S(o)),N(o,o))}function E(n,l,t){var u,i;if("function"==typeof n.type){for(u=n.__k,i=0;u&&i<u.length;i++)u[i]&&(u[i].__=n,l=E(u[i],l,t));return l}n.__e!=l&&(l&&n.type&&!t.contains(l)&&(l=S(n)),t.insertBefore(n.__e,l||null),l=n.__e);do{l=l&&l.nextSibling}while(null!=l&&8===l.nodeType);return l}function F(n,l,t,u){var i=n.key,o=n.type,e=t-1,r=t+1,f=l[t];if(null===f||f&&i==f.key&&o===f.type&&0==(f.__u&v))return t;if(u>(null!=f&&0==(f.__u&v)?1:0))for(;e>=0||r<l.length;){if(e>=0){if((f=l[e])&&0==(f.__u&v)&&i==f.key&&o===f.type)return e;e--}if(r<l.length){if((f=l[r])&&0==(f.__u&v)&&i==f.key&&o===f.type)return r;r++}}return-1}function H(n,l,t){"-"===l[0]?n.setProperty(l,null==t?"":t):n[l]=null==t?"":"number"!=typeof t||w.test(l)?t:t+"px"}function L(n,l,t,u,i){var o;n:if("style"===l)if("string"==typeof t)n.style.cssText=t;else{if("string"==typeof u&&(n.style.cssText=u=""),u)for(l in u)t&&l in t||H(n.style,l,"");if(t)for(l in t)u&&t[l]===u[l]||H(n.style,l,t[l])}else if("o"===l[0]&&"n"===l[1])o=l!==(l=l.replace(/(PointerCapture)$|Capture$/i,"$1")),l=l.toLowerCase()in n||"onFocusOut"===l||"onFocusIn"===l?l.toLowerCase().slice(2):l.slice(2),n.l||(n.l={}),n.l[l+o]=t,t?u?t.t=u.t:(t.t=f,n.addEventListener(l,o?s:c,o)):n.removeEventListener(l,o?s:c,o);else{if("http://www.w3.org/2000/svg"==i)l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s");else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n)try{n[l]=null==t?"":t;break n}catch(n){}"function"==typeof t||(null==t||!1===t&&"-"!==l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==t?"":t))}}function T(n){return function(t){if(this.l){var u=this.l[t.type+n];if(null==t.u)t.u=f++;else if(t.u<u.t)return;return u(l.event?l.event(t):t)}}}function O(n,t,u,i,o,e,r,f,c,s){var a,h,p,v,d,y,w,m,b,k,S,M,P,$,A,E,F=t.type;if(void 0!==t.constructor)return null;128&u.__u&&(c=!!(32&u.__u),e=[f=t.__e=u.__e]),(a=l.__b)&&a(t);n:if("function"==typeof F)try{if(m=t.props,b="prototype"in F&&F.prototype.render,k=(a=F.contextType)&&i[a.__c],S=a?k?k.props.value:a.__:i,u.__c?w=(h=t.__c=u.__c).__=h.__E:(b?t.__c=h=new F(m,S):(t.__c=h=new x(m,S),h.constructor=F,h.render=R),k&&k.sub(h),h.props=m,h.state||(h.state={}),h.context=S,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),b&&null==h.__s&&(h.__s=h.state),b&&null!=F.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=g({},h.__s)),g(h.__s,F.getDerivedStateFromProps(m,h.__s))),v=h.props,d=h.state,h.__v=t,p)b&&null==F.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),b&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount);else{if(b&&null==F.getDerivedStateFromProps&&m!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(m,S),!h.__e&&(null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(m,h.__s,S)||t.__v===u.__v)){for(t.__v!==u.__v&&(h.props=m,h.state=h.__s,h.__d=!1),t.__e=u.__e,t.__k=u.__k,t.__k.some(function(n){n&&(n.__=t)}),M=0;M<h._sb.length;M++)h.__h.push(h._sb[M]);h._sb=[],h.__h.length&&r.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(m,h.__s,S),b&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,d,y)})}if(h.context=S,h.props=m,h.__P=n,h.__e=!1,P=l.__r,$=0,b){for(h.state=h.__s,h.__d=!1,P&&P(t),a=h.render(h.props,h.state,h.context),A=0;A<h._sb.length;A++)h.__h.push(h._sb[A]);h._sb=[]}else do{h.__d=!1,P&&P(t),a=h.render(h.props,h.state,h.context),h.state=h.__s}while(h.__d&&++$<25);h.state=h.__s,null!=h.getChildContext&&(i=g(g({},i),h.getChildContext())),b&&!p&&null!=h.getSnapshotBeforeUpdate&&(y=h.getSnapshotBeforeUpdate(v,d)),I(n,_(E=null!=a&&a.type===C&&null==a.key?a.props.children:a)?E:[E],t,u,i,o,e,r,f,c,s),h.base=t.__e,t.__u&=-161,h.__h.length&&r.push(h),w&&(h.__E=h.__=null)}catch(n){if(t.__v=null,c||null!=e){for(t.__u|=c?160:128;f&&8===f.nodeType&&f.nextSibling;)f=f.nextSibling;e[e.indexOf(f)]=null,t.__e=f}else t.__e=u.__e,t.__k=u.__k;l.__e(n,t,u)}else null==e&&t.__v===u.__v?(t.__k=u.__k,t.__e=u.__e):t.__e=j(u.__e,t,u,i,o,e,r,c,s);(a=l.diffed)&&a(t)}function V(n,t,u){t.__d=void 0;for(var i=0;i<u.length;i++)z(u[i],u[++i],u[++i]);l.__c&&l.__c(t,n),n.some(function(t){try{n=t.__h,t.__h=[],n.some(function(n){n.call(t)})}catch(n){l.__e(n,t.__v)}})}function j(t,u,i,o,e,r,f,c,s){var a,h,p,v,y,w,g,b=i.props,k=u.props,C=u.type;if("svg"===C?e="http://www.w3.org/2000/svg":"math"===C?e="http://www.w3.org/1998/Math/MathML":e||(e="http://www.w3.org/1999/xhtml"),null!=r)for(a=0;a<r.length;a++)if((y=r[a])&&"setAttribute"in y==!!C&&(C?y.localName===C:3===y.nodeType)){t=y,r[a]=null;break}if(null==t){if(null===C)return document.createTextNode(k);t=document.createElementNS(e,C,k.is&&k),c&&(l.__m&&l.__m(u,r),c=!1),r=null}if(null===C)b===k||c&&t.data===k||(t.data=k);else{if(r=r&&n.call(t.childNodes),b=i.props||d,!c&&null!=r)for(b={},a=0;a<t.attributes.length;a++)b[(y=t.attributes[a]).name]=y.value;for(a in b)if(y=b[a],"children"==a);else if("dangerouslySetInnerHTML"==a)p=y;else if(!(a in k)){if("value"==a&&"defaultValue"in k||"checked"==a&&"defaultChecked"in k)continue;L(t,a,null,y,e)}for(a in k)y=k[a],"children"==a?v=y:"dangerouslySetInnerHTML"==a?h=y:"value"==a?w=y:"checked"==a?g=y:c&&"function"!=typeof y||b[a]===y||L(t,a,y,b[a],e);if(h)c||p&&(h.__html===p.__html||h.__html===t.innerHTML)||(t.innerHTML=h.__html),u.__k=[];else if(p&&(t.innerHTML=""),I(t,_(v)?v:[v],u,i,o,"foreignObject"===C?"http://www.w3.org/1999/xhtml":e,r,f,r?r[0]:i.__k&&S(i,0),c,s),null!=r)for(a=r.length;a--;)m(r[a]);c||(a="value","progress"===C&&null==w?t.removeAttribute("value"):void 0!==w&&(w!==t[a]||"progress"===C&&!w||"option"===C&&w!==b[a])&&L(t,a,w,b[a],e),a="checked",void 0!==g&&g!==t[a]&&L(t,a,g,b[a],e))}return t}function z(n,t,u){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==t||(n.__u=n(t))}else n.current=t}catch(n){l.__e(n,u)}}function N(n,t,u){var i,o;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!==n.__e||z(i,null,t)),null!=(i=n.__c)){if(i.componentWillUnmount)try{i.componentWillUnmount()}catch(n){l.__e(n,t)}i.base=i.__P=null}if(i=n.__k)for(o=0;o<i.length;o++)i[o]&&N(i[o],t,u||"function"!=typeof n.type);u||m(n.__e),n.__c=n.__=n.__e=n.__d=void 0}function R(n,l,t){return this.constructor(n,t)}function q(t,u,i){var o,e,r,f;l.__&&l.__(t,u),e=(o="function"==typeof i)?null:i&&i.__k||u.__k,r=[],f=[],O(u,t=(!o&&i||u).__k=b(C,null,[t]),e||d,d,u.namespaceURI,!o&&i?[i]:e?null:u.firstChild?n.call(u.childNodes):null,r,!o&&i?i:e?e.__e:u.firstChild,o,f),V(r,t,f)}n=y.slice,l={__e:function(n,l,t,u){for(var i,o,e;l=l.__;)if((i=l.__c)&&!i.__)try{if((o=i.constructor)&&null!=o.getDerivedStateFromError&&(i.setState(o.getDerivedStateFromError(n)),e=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,u||{}),e=i.__d),e)return i.__E=i}catch(l){n=l}throw n}},t=0,u=function(n){return null!=n&&null==n.constructor},x.prototype.setState=function(n,l){var t;t=null!=this.__s&&this.__s!==this.state?this.__s:this.__s=g({},this.state),"function"==typeof n&&(n=n(g({},t),this.props)),n&&g(t,n),null!=n&&this.__v&&(l&&this._sb.push(l),P(this))},x.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),P(this))},x.prototype.render=C,i=[],e="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,r=function(n,l){return n.__v.__b-l.__v.__b},$.__r=0,f=0,c=T(!1),s=T(!0),a=0,h={__proto__:null,render:q,hydrate:function n(l,t){q(l,t,n)},createElement:b,h:b,Fragment:C,createRef:function(){return{current:null}},isValidElement:u,Component:x,cloneElement:function(l,t,u){var i,o,e,r,f=g({},l.props);for(e in l.type&&l.type.defaultProps&&(r=l.type.defaultProps),t)"key"==e?i=t[e]:"ref"==e?o=t[e]:f[e]=void 0===t[e]&&void 0!==r?r[e]:t[e];return arguments.length>2&&(f.children=arguments.length>3?n.call(arguments,2):u),k(l.type,f,i||l.key,o||l.ref,null)},createContext:function(n,l){var t={__c:l="__cC"+a++,__:n,Consumer:function(n,l){return n.children(l)},Provider:function(n){var t,u;return this.getChildContext||(t=new Set,(u={})[l]=this,this.getChildContext=function(){return u},this.componentWillUnmount=function(){t=null},this.shouldComponentUpdate=function(n){this.props.value!==n.value&&t.forEach(function(n){n.__e=!0,P(n)})},this.sub=function(n){t.add(n);var l=n.componentWillUnmount;n.componentWillUnmount=function(){t&&t.delete(n),l&&l.call(n)}}),n.children}};return t.Provider.__=t.Consumer.contextType=t},toChildArray:function n(l,t){return t=t||[],null==l||"boolean"==typeof l||(_(l)?l.some(function(l){n(l,t)}):t.push(l)),t},options:l},typeof module<"u"?module.exports=h:self.preact=h});
+//# sourceMappingURL=preact.min.umd.js.map
+</script>
+<script>
+(function(){
+  var P = window.preact, h = P.h;
+  var TPL = document.getElementById('dc-tpl').content;
+  var WHOLE = /^\{\{\s*([^}]+?)\s*\}\}$/;
+  var ANY = /\{\{\s*([^}]+?)\s*\}\}/g;
+  function lit(p){
+    if (p === 'true') return {ok:true, v:true};
+    if (p === 'false') return {ok:true, v:false};
+    if (p === 'null') return {ok:true, v:null};
+    if (/^-?\d+(\.\d+)?$/.test(p)) return {ok:true, v:Number(p)};
+    if (/^(['"]).*\1$/.test(p)) return {ok:true, v:p.slice(1,-1)};
+    return {ok:false};
+  }
+  function get(path, scope){
+    var l = lit(path); if (l.ok) return l.v;
+    var parts = path.split('.'), v = scope;
+    for (var i = 0; i < parts.length; i++){ if (v == null) return undefined; v = v[parts[i]]; }
+    return v;
+  }
+  function interp(s, scope){
+    var m = WHOLE.exec(s); if (m) return get(m[1], scope);
+    return s.replace(ANY, function(_, p){ var v = get(p, scope); return v == null ? '' : String(v); });
+  }
+  function str(s, scope){ return s.replace(ANY, function(_, p){ var v = get(p, scope); return v == null ? '' : String(v); }); }
+  function kids(node, scope){
+    var out = [];
+    for (var c = node.firstChild; c; c = c.nextSibling){
+      var r = walk(c, scope);
+      if (Array.isArray(r)) { for (var j = 0; j < r.length; j++) out.push(r[j]); }
+      else if (r != null) out.push(r);
+    }
+    return out;
+  }
+  function walk(n, scope){
+    if (n.nodeType === 3){ var t = n.nodeValue; return t.indexOf('{{') < 0 ? t : str(t, scope); }
+    if (n.nodeType !== 1) return null;
+    var tag = n.localName, low = tag.toLowerCase();
+    if (low === 'sc-for'){
+      var list = interp(n.getAttribute('list') || '', scope) || [];
+      var as = n.getAttribute('as') || 'item', res = [];
+      for (var i = 0; i < list.length; i++){
+        var s2 = Object.create(scope); s2[as] = list[i]; s2.$index = i;
+        var k = kids(n, s2); for (var j = 0; j < k.length; j++) res.push(k[j]);
+      }
+      return res;
+    }
+    if (low === 'sc-if'){ return interp(n.getAttribute('value') || '', scope) ? kids(n, scope) : null; }
+    var props = {};
+    for (var a = 0; a < n.attributes.length; a++){
+      var at = n.attributes[a], name = at.name, val = at.value, ln = name.toLowerCase();
+      if (ln.indexOf('hint-') === 0) continue;
+      if (ln.length > 2 && ln.slice(0,2) === 'on'){
+        var fn = interp(val, scope); if (typeof fn !== 'function') continue;
+        if (ln === 'onchange' && low === 'input') ln = 'oninput';
+        props[ln] = fn; continue;
+      }
+      if (ln === 'ref'){ var rf = interp(val, scope); if (typeof rf === 'function') props.ref = rf; continue; }
+      var v = val.indexOf('{{') < 0 ? val : (ln === 'style' || ln === 'class' ? str(val, scope) : interp(val, scope));
+      if (ln === 'tabindex') { props.tabIndex = v; continue; }
+      props[name] = v;
+    }
+    return h.apply(null, [tag, props].concat(kids(n, scope)));
+  }
+  window.DCLogic = class extends P.Component {
+    render(){ var vals = this.renderVals ? this.renderVals() : {}; var scope = Object.assign(Object.create(null), this.props, vals); return kids(TPL, scope); }
+  };
+  window.__dcMount = function(C, props){ P.render(h(C, props), document.getElementById('app')); };
+})();
+</script>
+<script>
+
+class Component extends DCLogic {
+  state = { scrollMode: false, model: 1, exploded: false, skyMode: 'work', skyA: 2, step: 0, fSector: null, need: 4000, cs: 0, prevCs: -1, csPlay: true, seen: {}, gf: 'all', cmp: ['hd430', 'lui'], tt: 0, ttPlay: true, nf: 'Tutti' };
+  els = {};
+  ry = -30;
+  drag = null;
+  MODELS = [
+    { name: 'Residential 170', mm: 1700 },
+    { name: 'Leonardo HD', mm: 2900 },
+    { name: 'Leonardo HD 430', mm: 4300 },
+    { name: 'Lui 460', mm: 4620 }
+  ];
+
+  getRefs() {
+    if (this._refs) return this._refs;
+    this._refs = {};
+    ['root', 'hero', 'anat', 'sky', 'story', 'track', 'cur', 'proof'].forEach((k) => {
+      this._refs[k] = (el) => {
+        if (!el) return;
+        this.els[k] = el;
+        if (k === 'anat' || k === 'sky' || k === 'proof') this.observe(k, el);
+      };
+    });
+    return this._refs;
+  }
+
+  observe(k, el) {
+    this.obs = this.obs || {};
+    if (this.obs[k]) return;
+    this.obs[k] = true;
+    if (typeof IntersectionObserver === 'undefined') { setTimeout(() => this.markSeen(k), 0); return; }
+    if (!this.io) {
+      this.io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) { this.io.unobserve(e.target); this.markSeen(e.target.getAttribute('data-k')); }
+        });
+      }, { threshold: 0.25 });
+    }
+    this.io.observe(el);
+  }
+
+  markSeen(k) {
+    if (!k || this.state.seen[k]) return;
+    this.setState((s) => ({ seen: Object.assign({}, s.seen, { [k]: true }) }));
+    if (k === 'anat' && !this.userExplode) this.te = setTimeout(() => { if (!this.userExplode) this.setState({ exploded: true }); }, 700);
+  }
+
+  componentDidMount() {
+    this.reduce = this.props.motion === false || !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const scrollMode = window.innerHeight < 1800;
+    this.setState({ scrollMode });
+    const rootEl = this.els.root;
+    if (rootEl) {
+      const nodes = rootEl.querySelectorAll('[data-rv]');
+      if (this.reduce || typeof IntersectionObserver === 'undefined') nodes.forEach((n) => n.classList.add('in'));
+      else {
+        this.rvio = new IntersectionObserver((es) => es.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add('in'); this.rvio.unobserve(e.target); }
+        }), { threshold: 0.3 });
+        nodes.forEach((n) => this.rvio.observe(n));
+      }
+    }
+    if (scrollMode) {
+      this.onScroll = () => {
+        const se = document.scrollingElement || document.documentElement;
+        const top = se.scrollTop;
+        const v = top - (this.lastTop ?? top);
+        this.lastTop = top;
+        if (!this.reduce) this.skew = Math.max(-9, Math.min(9, (this.skew || 0) + v * 0.06));
+        const p = Math.max(0, Math.min(1, se.scrollTop / Math.max(1, se.scrollHeight - window.innerHeight)));
+        const r = this.els.root;
+        if (r) { r.style.setProperty('--altp', p.toFixed(4)); r.style.setProperty('--alt', String(Math.round(p * 662) * 10)); }
+      };
+      window.addEventListener('scroll', this.onScroll, { passive: true });
+      this.onScroll();
+    }
+    if (this.reduce) { this.paint(0.6); }
+    else {
+      let last = performance.now();
+      const start = last;
+      const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const step = (now) => {
+        const dt = (now - last) / 1000; last = now;
+        if (!this.drag) this.ry += dt * 16;
+        const t = ((now - start) / 1000) % 9;
+        const view = Math.floor((now - start) / 9000) % 2 ? 'wire' : 'solid';
+        if (view !== this.view && this.els.hero) { this.view = view; this.els.hero.setAttribute('data-view', view); }
+        let l;
+        if (t < 1) l = 0; else if (t < 4.2) l = ease((t - 1) / 3.2); else if (t < 6.2) l = 1; else if (t < 8.4) l = 1 - ease((t - 6.2) / 2.2); else l = 0;
+        this.paint(l);
+        if (this.skew) {
+          this.skew *= 0.88;
+          if (Math.abs(this.skew) < 0.02) this.skew = 0;
+          if (this.els.root) this.els.root.style.setProperty('--skew', this.skew.toFixed(2));
+        }
+        this.raf = requestAnimationFrame(step);
+      };
+      this.raf = requestAnimationFrame(step);
+    }
+    this.iv3 = setInterval(() => {
+      if (this.props.motion === false || !this.state.ttPlay) return;
+      this.setState({ tt: (this.state.tt + 1) % 5 });
+    }, 7000);
+    this.iv2 = setInterval(() => {
+      if (this.props.motion === false) return;
+      this.k2 = (this.k2 || 0) + 1;
+      const u = {};
+      if (this.state.seen.sky && Date.now() - (this.skyHold || 0) > 8000) u.skyA = (this.state.skyA + 1) % 8;
+      if (this.state.seen.anat && !this.userExplode && this.k2 % 2 === 0) u.exploded = !this.state.exploded;
+      if (Object.keys(u).length) this.setState(u);
+    }, 2600);
+    this.iv = setInterval(() => {
+      if (this.props.motion === false || !this.state.csPlay) return;
+      this.setState({ prevCs: this.state.cs, cs: (this.state.cs + 1) % 4 });
+    }, 6000);
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.onScroll) window.removeEventListener('scroll', this.onScroll);
+    clearInterval(this.iv); clearInterval(this.iv2); clearInterval(this.iv3); clearTimeout(this.te);
+    if (this.rvio) this.rvio.disconnect();
+    if (this.io) this.io.disconnect();
+  }
+
+  paint(l) {
+    const el = this.els.hero;
+    if (!el) return;
+    const mmMax = this.MODELS[this.state.model].mm;
+    const px = mmMax * 0.065 * l;
+    el.style.setProperty('--up', px.toFixed(1) + 'px');
+    el.style.setProperty('--ry', this.ry.toFixed(2) + 'deg');
+    el.style.setProperty('--mm', String(Math.round(mmMax * l / 10) * 10));
+    el.style.setProperty('--deg', String(Math.round(((this.ry % 360) + 360) % 360)));
+  }
+
+  pDown = (e) => { this.drag = { x: e.clientX, ry: this.ry }; };
+  pMove = (e) => { if (this.drag) { this.ry = this.drag.ry + (e.clientX - this.drag.x) * 0.5; if (this.reduce) this.paint(0.6); } };
+  pUp = () => { this.drag = null; };
+
+  onMove = (e) => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    const c = this.els.cur;
+    if (c) {
+      c.style.transform = 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)';
+      c.classList.add('on');
+      const t = e.target;
+      c.classList.toggle('big', !!(t && t.closest && t.closest('a, button, .stage3d, .half')));
+    }
+    const h = this.els.hero;
+    if (h && !this.reduce) {
+      const r = h.getBoundingClientRect();
+      if (e.clientY >= r.top && e.clientY <= r.bottom) {
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        h.style.setProperty('--rx', (-14 - y * 16).toFixed(2) + 'deg');
+      }
+    }
+  };
+
+  trackScroll = (e) => {
+    const t = e.currentTarget;
+    const p = t.scrollLeft / Math.max(1, t.scrollWidth - t.clientWidth);
+    if (this.els.story) this.els.story.style.setProperty('--sx', (0.25 + p * 0.75).toFixed(3));
+  };
+
+  scrollTrack(dir) {
+    const t = this.els.track;
+    if (t) t.scrollBy({ left: dir * 584, behavior: 'smooth' });
+  }
+
+  renderVals() {
+    const S = this.state;
+    const motion = this.props.motion !== false;
+    const accent = this.props.accent ?? '#E30613';
+    const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const refs = this.getRefs();
+    const seen = S.seen;
+
+    const models = this.MODELS.map((m, i) => ({
+      name: m.name, on: i === S.model, cls: i === S.model ? 'chip on' : 'chip',
+      pick: () => this.setState({ model: i })
+    }));
+
+    // Anatomia
+    const ex = S.exploded;
+    const lay = (y, d) => 'transform: translateY(' + (ex ? y : 0) + 'px); transition-delay: ' + (ex ? d : 0.4 - d).toFixed(2) + 's';
+    const ly = { wheels: lay(70, 0), chassis: lay(30, 0.08), mast: lay(-30, 0.16), cage: lay(-110, 0.24), ctrl: lay(-190, 0.32) };
+
+    // Prodotti
+    const P = [
+      { name: 'Residential 170', short: 'RES 170', cat: 'AERIAL PLATFORM', kind: 'lift', work: 3700, plat: 1700, desc: 'La prima piattaforma pensata per il cantiere residenziale.' },
+      { name: 'Leonardo HD', short: 'HD', cat: 'AERIAL PLATFORM', kind: 'lift', work: 4900, plat: 2900, desc: 'Compatta e robusta: fino a 5 metri di altezza di lavoro.' },
+      { name: 'Leonardo HD 430', short: 'HD 430', cat: 'AERIAL PLATFORM', kind: 'lift', work: 6300, plat: 4300, desc: 'Più altezza nella stessa compattezza: 760 mm di larghezza.' },
+      { name: 'Lui 460', short: 'LUI 460', cat: 'AERIAL PLATFORM', kind: 'lift', work: 6620, plat: 4620, desc: 'Batterie High-Cycle: fino a 200 cicli o 9 km con una carica.' },
+      { name: 'Spin-Go', short: 'SPIN-GO', cat: 'PICKING SOLUTION', kind: 'picker', work: 4168, plat: 2168, desc: 'A spinta, con sollevamento motorizzato. Leggero e agile.' },
+      { name: 'Sprint', short: 'SPRINT', cat: 'PICKING SOLUTION', kind: 'picker', work: 5350, plat: 3350, desc: 'Commissionatore con raggio di sterzata 0° per corsie strette.' },
+      { name: 'Sprint Large Parcels', short: 'SPR. LP', cat: 'PICKING SOLUTION', kind: 'picker', work: 0, plat: 0, desc: 'Massima efficienza nel picking di pacchi ingombranti.' },
+      { name: 'Sprint Tire Lifter', short: 'SPR. TL', cat: 'PICKING SOLUTION', kind: 'picker', work: 0, plat: 0, desc: 'Sicurezza e affidabilità nella movimentazione degli pneumatici.' }
+    ];
+    const isWork = S.skyMode === 'work';
+    const sky = P.map((p, i) => {
+      const v = isWork ? p.work : p.plat;
+      const has = v > 0;
+      const h = has ? (v / 7000) * 420 : 60;
+      return {
+        short: p.short, on: i === S.skyA,
+        btnCls: i === S.skyA ? 'barbtn on' : 'barbtn',
+        val: has ? fmt(v) : 'n.d.',
+        aria: p.name + ': ' + (has ? fmt(v) + ' mm' : 'dato non disponibile'),
+        barStyle: 'display: block; width: 100%; max-width: 72px; height: ' + h.toFixed(0) + 'px; background-color: ' + (has ? (p.kind === 'lift' ? '#2B2B2A' : '#6E6E6D') : 'transparent') + '; border: ' + (has ? '0' : '1.5px dashed #8A8A89') + '; transition-delay: ' + (i * 0.08).toFixed(2) + 's',
+        pick: () => { this.skyHold = Date.now(); if (this.state.skyA !== i) this.setState({ skyA: i }); }
+      };
+    });
+    const a = P[S.skyA];
+    const skyA = { name: a.name, cat: a.cat, desc: a.desc, work: a.work ? fmt(a.work) + ' mm' : '[DA SCHEDA]', plat: a.plat ? fmt(a.plat) + ' mm' : '[DA SCHEDA]' };
+
+    // Finder
+    const SEC = [
+      { k: 'edi', n: '01', t: 'Edilizia e finiture', m: ['Leonardo HD', 'Leonardo HD 430', 'Lui 460'] },
+      { k: 'res', n: '02', t: 'Cantiere residenziale', m: ['Residential 170', 'Leonardo HD'] },
+      { k: 'man', n: '03', t: 'Manutenzione industriale', m: ['Leonardo HD', 'Leonardo HD 430', 'Lui 460'] },
+      { k: 'log', n: '04', t: 'Logistica e magazzini', m: ['Spin-Go', 'Sprint', 'Sprint Large Parcels'] },
+      { k: 'ret', n: '05', t: 'Retail e punti vendita', m: ['Spin-Go', 'Sprint'] },
+      { k: 'tyr', n: '06', t: 'Pneumatici', m: ['Sprint Tire Lifter'] }
+    ];
+    const fSectors = SEC.map((s) => ({
+      n: s.n, t: s.t, on: s.k === S.fSector, cls: s.k === S.fSector ? 'fchip on' : 'fchip',
+      pick: () => this.setState({ fSector: s.k, step: 1 })
+    }));
+    let res = null;
+    const sec = SEC.find((s) => s.k === S.fSector);
+    if (sec) {
+      const cands = P.filter((p) => sec.m.indexOf(p.name) >= 0);
+      const withData = cands.filter((p) => p.work > 0).sort((x, y) => x.work - y.work);
+      let best = withData.find((p) => p.work >= S.need);
+      let fit;
+      if (best) fit = '✓ ' + fmt(best.work) + ' MM DI LAVORO — COPRE I TUOI ' + fmt(S.need) + ' MM';
+      else if (withData.length) { best = withData[withData.length - 1]; fit = 'LA PIÙ ALTA DEL SETTORE: ' + fmt(best.work) + ' MM DI LAVORO'; }
+      else { best = cands[0]; fit = 'ALTEZZE DA VERIFICARE SULLA SCHEDA TECNICA'; }
+      const others = cands.filter((p) => p !== best).map((p) => p.name);
+      res = {
+        name: best.name, desc: best.desc, sector: sec.t.toUpperCase(), fit,
+        alt: others.length ? 'ALTERNATIVE: ' + others.join(' · ').toUpperCase() : '',
+        isLift: best.kind === 'lift', isPicker: best.kind === 'picker'
+      };
+    }
+    const stepNames = ['01 SETTORE', '02 ALTEZZA', '03 SOLUZIONE'];
+    const steps = stepNames.map((l, i) => ({ label: l, color: i <= S.step ? accent : '#8A8A89', text: i <= S.step ? '#2B2B2A' : '#5E5E5D' }));
+
+    // Storia
+    const history = [
+      { y: '1980', tag: 'LE ORIGINI', t: 'Dal cantiere alla prima piattaforma', d: 'Dall’esperienza di BRAVIISOL nell’installazione di pareti e controsoffitti nasce la prima piattaforma mobile.' },
+      { y: '1995', tag: 'IDRAULICA', t: 'Le prime piattaforme idrauliche', d: 'I primi modelli a sollevamento idraulico, tra cui LUI MINI, precursore di Leonardo HD.' },
+      { y: '2010', tag: 'IL MARCHIO', t: 'Nasce Bravi Platforms', d: 'Il marchio Bravi Platforms e la gamma Sprint dedicata al picking.' },
+      { y: 'Oggi', tag: 'NEL MONDO', t: 'Innovazione e presenza internazionale', d: '7.000 m² di stabilimento a Castelfidardo, oltre 740 clienti in 48 paesi.' }
+    ].map((m, i) => ({ ...m, i: '0' + (i + 1), s0: i === 0, s1: i === 1, s2: i === 2, s3: i === 3, nowDelay: 'animation-delay: ' + (i * 1.2).toFixed(1) + 's' }));
+
+    // Case
+    const C = [
+      { sector: 'CANTIERE RESIDENZIALE', sol: 'Residential 170', title: 'Ristrutturazione di interni · [CLIENTE]', res: '[RISULTATO OTTENUTO]', bg: '#3A3A39' },
+      { sector: 'MANUTENZIONE INDUSTRIALE', sol: 'Leonardo HD 430', title: 'Manutenzione impianti · [CLIENTE]', res: '[RISULTATO OTTENUTO]', bg: '#2E2E2D' },
+      { sector: 'LOGISTICA', sol: 'Sprint', title: 'Picking in magazzino · [CLIENTE]', res: '[RISULTATO OTTENUTO]', bg: '#444443' },
+      { sector: 'RETAIL', sol: 'Spin-Go', title: 'Riassortimento punto vendita · [CLIENTE]', res: '[RISULTATO OTTENUTO]', bg: '#262626' }
+    ];
+    const cases = C.map((c, i) => ({
+      ...c, n: '0' + (i + 1), hidden: i !== S.cs, s0: i === 0, s1: i === 1, s2: i === 2, s3: i === 3,
+      cls: i === S.cs ? 'cslide on' : (i === S.prevCs ? 'cslide prev' : 'cslide')
+    }));
+    const goCs = (i) => this.setState({ prevCs: this.state.cs, cs: (i + 4) % 4 });
+    const csRun = S.csPlay && motion;
+
+    // TICKER
+    const tk = ['ISO 9001:2015', 'CE', 'UL / CSA', 'ANSI-SAIA A92.20', 'INDUSTRIA 4.0', 'MADE IN ITALY', '48 PAESI', '740+ CLIENTI', 'RICAMBI IN 48 ORE', 'DAL 1980'];
+
+    // GAMMA COMPLETA + CONFRONTO
+    const G = [
+      { id: 'res', name: 'Residential 170', cat: 'aerial', kind: 'lift', tag: 'CANTIERE RESIDENZIALE', desc: 'La prima piattaforma pensata per il cantiere residenziale: solo 360 kg.', work: 3700, plat: 1700, load: 180, weight: 360, width: 667 },
+      { id: 'hd', name: 'Leonardo HD', cat: 'aerial', kind: 'lift', tag: 'COMPATTA E ROBUSTA', desc: 'Fino a 5 metri di altezza di lavoro, per finiture e manutenzione.', work: 4900, plat: 2900, load: 227, weight: 560, width: 0 },
+      { id: 'hd430', name: 'Leonardo HD 430', cat: 'aerial', kind: 'lift', tag: 'PIÙ ALTEZZA, STESSA COMPATTEZZA', desc: '6,3 metri di altezza di lavoro in 760 mm di larghezza.', work: 6300, plat: 4300, load: 180, weight: 0, width: 760 },
+      { id: 'lui', name: 'Lui 460', cat: 'aerial', kind: 'lift', tag: 'HIGH-CYCLE', desc: 'Fino a 200 cicli o 9 km con una carica, fino a 6,6 metri di lavoro.', work: 6620, plat: 4620, load: 0, weight: 1250, width: 760 },
+      { id: 'sprint', name: 'Sprint', cat: 'picking', kind: 'picker', tag: 'STERZATA 0°', desc: 'Il commissionatore che ruota nel proprio ingombro, per corsie strette.', work: 5350, plat: 3350, load: 130, weight: 690, width: 808 },
+      { id: 'spin', name: 'Spin-Go', cat: 'picking', kind: 'picker', tag: 'A SPINTA, MOTORIZZATO', desc: 'Leggero e agile, con sollevamento motorizzato.', work: 4168, plat: 2168, load: 130, weight: 280, width: 730 },
+      { id: 'lp', name: 'Sprint Large Parcels', cat: 'picking', kind: 'picker', tag: 'PACCHI INGOMBRANTI', desc: 'Massima efficienza nel picking di pacchi ingombranti.', work: 0, plat: 0, load: 0, weight: 0, width: 0 },
+      { id: 'tl', name: 'Sprint Tire Lifter', cat: 'picking', kind: 'picker', tag: 'PNEUMATICI', desc: 'Sicurezza e affidabilità nella movimentazione degli pneumatici.', work: 0, plat: 0, load: 0, weight: 0, width: 0 }
+    ];
+    const nd = (v, u) => (v ? fmt(v) + ' ' + u : 'n.d.');
+    const gf = S.gf;
+    const cmp = S.cmp;
+    let gi = 0;
+    const gamma = G.map((p, i) => {
+      const show = gf === 'all' || gf === p.cat;
+      const d = show ? gi++ : 0;
+      const inCmp = cmp.indexOf(p.id) >= 0;
+      return {
+        name: p.name, tag: p.tag, desc: p.desc, idx: '0' + (i + 1),
+        catLabel: p.cat === 'aerial' ? 'AERIAL' : 'PICKING',
+        isLift: p.kind === 'lift', isPicker: p.kind === 'picker',
+        k1: nd(p.work, 'mm'), k2: nd(p.plat, 'mm'),
+        k3l: p.load ? 'PORTATA' : 'PESO', k3: p.load ? fmt(p.load) + ' kg' : nd(p.weight, 'kg'),
+        cls: show ? 'gcard show' : 'gcard',
+        delay: 'animation-delay: ' + (d * 0.07).toFixed(2) + 's',
+        inCmp, cmpLabel: inCmp ? '✓ In confronto' : '+ Confronta', cmpCls: inCmp ? 'cmpbtn on' : 'cmpbtn',
+        toggleCmp: () => {
+          const c = this.state.cmp.slice();
+          const ix = c.indexOf(p.id);
+          if (ix >= 0) c.splice(ix, 1); else { if (c.length >= 3) c.shift(); c.push(p.id); }
+          this.setState({ cmp: c });
+        }
+      };
+    });
+    const gfBtns = [['all', 'Tutta la gamma'], ['aerial', 'Aerial Platforms'], ['picking', 'Picking Solutions']].map(([k, l]) => ({
+      label: l, on: gf === k, cls: gf === k ? 'gfb on' : 'gfb', pick: () => this.setState({ gf: k })
+    }));
+    const selG = G.filter((p) => cmp.indexOf(p.id) >= 0);
+    const cmpRows = [['ALTEZZA DI LAVORO', 'work', 'mm'], ['ALTEZZA PIATTAFORMA', 'plat', 'mm'], ['PORTATA', 'load', 'kg'], ['PESO', 'weight', 'kg'], ['LARGHEZZA', 'width', 'mm']].map(([label, key, u]) => {
+      const max = Math.max(1, ...selG.map((p) => p[key] || 0));
+      return {
+        label,
+        cells: selG.map((p) => ({
+          v: p[key] ? fmt(p[key]) + ' ' + u : 'n.d.',
+          bar: 'display: block; height: 6px; margin-top: 8px; background: ' + (p[key] ? 'var(--acc)' : 'transparent') + '; width: ' + ((p[key] || 0) / max * 100).toFixed(0) + '%'
+        }))
+      };
+    });
+
+    // TECNOLOGIE
+    const TT = [['01', 'Sollevamento verticale'], ['02', 'Batterie High-Cycle'], ['03', 'Sterzata 0°'], ['04', 'Ingombro ridotto'], ['05', 'Stabilità e certificazioni']];
+    const ttRun = S.ttPlay && motion;
+    const techTabs = TT.map(([n, t], i) => ({
+      n, t, on: i === S.tt,
+      cls: 'ttab' + (i === S.tt ? ' on' : '') + (i === S.tt && ttRun ? ' run' : ''),
+      pick: () => this.setState({ tt: i, ttPlay: false })
+    }));
+    const tpc = (i) => (i === S.tt ? 'tpanel show' : 'tpanel');
+
+    // NEWS
+    const nf = S.nf;
+    const nfBtns = ['Tutti', 'Case Studies', 'Eventi', 'Press'].map((f) => ({
+      label: f, on: f === nf, cls: f === nf ? 'nfb on' : 'nfb', pick: () => this.setState({ nf: f })
+    }));
+    const newsOn = nf === 'Tutti' || nf === 'Press';
+
+    const mqBase = ['Let’s move forward together —', 'Engineering in Motion —'];
+
+    return {
+      accent,
+      rootClass: motion ? 'v2' : 'v2 still',
+      refs,
+      scrollMode: S.scrollMode,
+      models,
+      maxTxt: fmt(this.MODELS[S.model].mm),
+      pDown: this.pDown, pMove: this.pMove, pUp: this.pUp,
+      onMove: this.onMove,
+
+      anatHead: 'io' + (seen.anat ? ' in' : ''),
+      anatStage: ex ? 'exploded' : '',
+      ly,
+      exploded: ex,
+      explodeLabel: ex ? '⤓ Ricomponi la macchina' : '⤒ Scomponi la macchina',
+      toggleExplode: () => { this.userExplode = true; this.setState({ exploded: !this.state.exploded }); },
+
+      skyCls: 'sky' + (seen.sky ? ' in' : ''),
+      sky, skyA,
+      isWork, isPlat: !isWork,
+      mWork: isWork ? 'mtog on' : 'mtog',
+      mPlat: !isWork ? 'mtog on' : 'mtog',
+      setWork: () => this.setState({ skyMode: 'work' }),
+      setPlat: () => this.setState({ skyMode: 'plat' }),
+
+      steps,
+      trackStyle: 'transform: translateX(' + (-S.step * 100) + '%)',
+      fSectors,
+      need: S.need,
+      needTxt: fmt(S.need),
+      onNeed: (e) => this.setState({ need: Number(e.target.value) }),
+      back: () => this.setState({ step: 0 }),
+      showRes: () => this.setState({ step: 2 }),
+      restart: () => this.setState({ step: 0, fSector: null }),
+      hasRes: !!res,
+      res: res || { name: '', desc: '', sector: '', fit: '', alt: '', isLift: true, isPicker: false },
+
+      history,
+      onTrack: this.trackScroll,
+      hPrev: () => this.scrollTrack(-1),
+      hNext: () => this.scrollTrack(1),
+
+      cases,
+      csNum: '0' + (S.cs + 1),
+      csPrev: () => { this.setState({ csPlay: false }); goCs(S.cs - 1); },
+      csNext: () => { this.setState({ csPlay: false }); goCs(S.cs + 1); },
+      csToggle: () => this.setState({ csPlay: !this.state.csPlay }),
+      csPlayIcon: csRun ? '❚❚' : '▶',
+      csPlayLabel: csRun ? 'Metti in pausa lo slideshow' : 'Avvia lo slideshow',
+
+      mq: mqBase.concat(mqBase, mqBase, mqBase),
+
+      ticker: tk.concat(tk),
+      gamma, gfBtns,
+      hasCmp: selG.length > 0, noCmp: selG.length === 0, cmpN: selG.length,
+      cmpHead: selG.map((p) => ({ name: p.name })),
+      cmpRows,
+      cmpGrid: 'grid-template-columns: 200px repeat(' + Math.max(1, selG.length) + ', minmax(0, 1fr))',
+      clearCmp: () => this.setState({ cmp: [] }),
+
+      techTabs,
+      tp0: tpc(0), tp1: tpc(1), tp2: tpc(2), tp3: tpc(3), tp4: tpc(4),
+      ttToggle: () => this.setState({ ttPlay: !this.state.ttPlay }),
+      ttPlayIcon: ttRun ? '❚❚' : '▶',
+      ttPlayLabel: ttRun ? 'Metti in pausa le tecnologie' : 'Avvia le tecnologie',
+
+      pfCls: 'pf' + (seen.proof ? ' in' : ''),
+
+      nfBtns,
+      newsCls: newsOn ? 'ncard show' : 'ncard',
+      newsEmpty: !newsOn,
+      resetNews: () => this.setState({ nf: 'Tutti' })
+    };
+  }
+}
+
+window.__dcMount(Component, {"accent": "#E30613", "motion": true});
+</script>
+</body>
+</html>
